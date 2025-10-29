@@ -1,0 +1,499 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}Browse Cats - MewZone{% endblock %}
+
+{% block content %}
+    <!-- E-commerce Header -->
+    <div class="ecommerce-header bg-white shadow-sm">
+        <div class="container-fluid">
+            <div class="row align-items-center py-3">
+                <div class="col-md-3">
+                    <h2 class="mb-0 text-primary">
+                        <i class="fas fa-cat me-2"></i>MewZone
+                    </h2>
+                </div>
+                <div class="col-md-6">
+                    <div class="search-bar">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for cats..." id="searchInput">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <div class="d-flex align-items-center justify-content-end gap-3">
+                        <a href="#" class="text-decoration-none text-dark">
+                            <i class="fas fa-user me-1"></i> Account
+                        </a>
+                        <a href="#" class="text-decoration-none text-dark position-relative">
+                            <i class="fas fa-shopping-cart me-1"></i> Cart
+                            <span class="badge bg-primary rounded-pill position-absolute top-0 start-100 translate-middle">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <div class="navbar-nav me-auto">
+                <a class="nav-link active" href="#"><i class="fas fa-home me-1"></i> Home</a>
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Categories</a>
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Breeds</a>
+                <a class="nav-link" href="#">Shop</a>
+                <a class="nav-link" href="#">About Us</a>
+                <a class="nav-link" href="#">Contact Us</a>
+            </div>
+            <div class="navbar-nav">
+                <span class="nav-link"><i class="fas fa-phone me-1"></i> +1 (555) 123-4567</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <!-- Left Sidebar - Filters -->
+            <div class="col-lg-3">
+                <div class="filter-sidebar bg-white p-4 rounded shadow-sm">
+                    <h5 class="mb-4"><i class="fas fa-filter me-2"></i>Filter Cats</h5>
+                
+                <!-- Search by Name -->
+                <div class="mb-4">
+                    <h6>Filter by Name</h6>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" placeholder="Enter cat name" id="nameFilter">
+                        <button class="btn btn-outline-secondary" type="button" id="clearName">Clear</button>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div class="mb-4">
+                    <h6>Filter by Price</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control" placeholder="Min - $0" id="minPrice">
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control" placeholder="Max - $5000" id="maxPrice">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Breed Filter -->
+                <div class="mb-4">
+                    <h6>Filter by Breed</h6>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" placeholder="Search breed..." id="breedSearch">
+                    </div>
+                    <div class="breed-list">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="persian" id="breed1">
+                            <label class="form-check-label" for="breed1">Persian (12)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="maine-coon" id="breed2">
+                            <label class="form-check-label" for="breed2">Maine Coon (8)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="british-shorthair" id="breed3">
+                            <label class="form-check-label" for="breed3">British Shorthair (15)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="ragdoll" id="breed4">
+                            <label class="form-check-label" for="breed4">Ragdoll (6)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="siamese" id="breed5">
+                            <label class="form-check-label" for="breed5">Siamese (9)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="scottish-fold" id="breed6">
+                            <label class="form-check-label" for="breed6">Scottish Fold (4)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gender Filter -->
+                <div class="mb-4">
+                    <h6>Filter by Gender</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="male" id="gender1">
+                        <label class="form-check-label" for="gender1">Male (25)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="female" id="gender2">
+                        <label class="form-check-label" for="gender2">Female (18)</label>
+                    </div>
+                </div>
+
+                <!-- Color Filter -->
+                <div class="mb-4">
+                    <h6>Filter by Color</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="black" id="color1">
+                        <label class="form-check-label" for="color1">Black (8)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="white" id="color2">
+                        <label class="form-check-label" for="color2">White (12)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="orange" id="color3">
+                        <label class="form-check-label" for="color3">Orange (15)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="gray" id="color4">
+                        <label class="form-check-label" for="color4">Gray (10)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="brown" id="color5">
+                        <label class="form-check-label" for="color5">Brown (7)</label>
+                    </div>
+                </div>
+
+                <!-- Age Filter -->
+                <div class="mb-4">
+                    <h6>Filter by Age</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="kitten" id="age1">
+                        <label class="form-check-label" for="age1">Kitten (0-1 year) (20)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="young" id="age2">
+                        <label class="form-check-label" for="age2">Young (1-3 years) (15)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="adult" id="age3">
+                        <label class="form-check-label" for="age3">Adult (3-7 years) (8)</label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
+                <button class="btn btn-outline-secondary w-100 mt-2" id="clearFilters">Clear All</button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-9">
+            <!-- Latest Cats Section -->
+            <div class="product-section mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-star text-warning me-2"></i>Latest Cats
+                    </h3>
+                    <a href="#" class="btn btn-outline-primary">See More <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+                <div class="row" id="latestCats">
+                    <!-- Latest cats will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Best Sellers Section -->
+            <div class="product-section mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-fire text-danger me-2"></i>Best Sellers
+                    </h3>
+                    <a href="#" class="btn btn-outline-primary">See More <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+                <div class="row" id="bestSellers">
+                    <!-- Best sellers will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Newly Coming Section -->
+            <div class="product-section mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-plus-circle text-success me-2"></i>Newly Coming
+                    </h3>
+                    <a href="#" class="btn btn-outline-primary">See More <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+                <div class="row" id="newlyComing">
+                    <!-- Newly coming cats will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Widget -->
+<div class="chat-widget position-fixed bottom-0 end-0 p-3">
+    <div class="card shadow" style="width: 300px;">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-comments me-2"></i>Live Chat</span>
+            <button class="btn btn-sm btn-outline-light" id="minimizeChat">−</button>
+        </div>
+        <div class="card-body" id="chatBody">
+            <div class="chat-message mb-2">
+                <small class="text-muted">MewZone Support</small>
+                <p class="mb-1">Hello! How can I help you find the perfect cat today?</p>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Type your message...">
+                <button class="btn btn-primary" type="button"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sample cat data
+    const catsData = {
+        latest: [
+            {
+                id: 1,
+                name: "Luna",
+                breed: "Persian",
+                gender: "Female",
+                age: "2 years",
+                color: "White",
+                price: 1200,
+                oldPrice: 1500,
+                discount: "20%",
+                image: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=200&fit=crop",
+                badge: "NEW"
+            },
+            {
+                id: 2,
+                name: "Max",
+                breed: "Maine Coon",
+                gender: "Male",
+                age: "1 year",
+                color: "Orange",
+                price: 1800,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=300&h=200&fit=crop",
+                badge: null
+            },
+            {
+                id: 3,
+                name: "Bella",
+                breed: "British Shorthair",
+                gender: "Female",
+                age: "3 years",
+                color: "Gray",
+                price: 1400,
+                oldPrice: 1600,
+                discount: "12%",
+                image: "https://images.unsplash.com/photo-1573865526739-1069f4dd8abd?w=300&h=200&fit=crop",
+                badge: null
+            },
+            {
+                id: 4,
+                name: "Charlie",
+                breed: "Ragdoll",
+                gender: "Male",
+                age: "6 months",
+                color: "Brown",
+                price: 2000,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1513245543132-31f507417b26?w=300&h=200&fit=crop",
+                badge: "HOT"
+            }
+        ],
+        bestSellers: [
+            {
+                id: 5,
+                name: "Mittens",
+                breed: "Siamese",
+                gender: "Female",
+                age: "2 years",
+                color: "White",
+                price: 1600,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=300&h=200&fit=crop",
+                badge: null
+            },
+            {
+                id: 6,
+                name: "Simba",
+                breed: "Scottish Fold",
+                gender: "Male",
+                age: "1 year",
+                color: "Orange",
+                price: 2200,
+                oldPrice: 2500,
+                discount: "12%",
+                image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=300&h=200&fit=crop",
+                badge: null
+            },
+            {
+                id: 7,
+                name: "Whiskers",
+                breed: "Persian",
+                gender: "Male",
+                age: "4 years",
+                color: "Black",
+                price: 1300,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1571566882372-1598d88abd90?w=300&h=200&fit=crop",
+                badge: null
+            },
+            {
+                id: 8,
+                name: "Princess",
+                breed: "Maine Coon",
+                gender: "Female",
+                age: "2 years",
+                color: "Gray",
+                price: 1900,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=300&h=200&fit=crop",
+                badge: null
+            }
+        ],
+        newlyComing: [
+            {
+                id: 9,
+                name: "Snowball",
+                breed: "Ragdoll",
+                gender: "Female",
+                age: "3 months",
+                color: "White",
+                price: 1800,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=200&fit=crop",
+                badge: "NEW"
+            },
+            {
+                id: 10,
+                name: "Tiger",
+                breed: "British Shorthair",
+                gender: "Male",
+                age: "4 months",
+                color: "Orange",
+                price: 1500,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=300&h=200&fit=crop",
+                badge: "NEW"
+            },
+            {
+                id: 11,
+                name: "Shadow",
+                breed: "Siamese",
+                gender: "Male",
+                age: "5 months",
+                color: "Black",
+                price: 1700,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1571566882372-1598d88abd90?w=300&h=200&fit=crop",
+                badge: "NEW"
+            },
+            {
+                id: 12,
+                name: "Coco",
+                breed: "Persian",
+                gender: "Female",
+                age: "2 months",
+                color: "Brown",
+                price: 1600,
+                oldPrice: null,
+                discount: null,
+                image: "https://images.unsplash.com/photo-1513245543132-31f507417b26?w=300&h=200&fit=crop",
+                badge: "NEW"
+            }
+        ]
+    };
+
+    // Function to create cat card HTML
+    function createCatCard(cat) {
+        return `
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="cat-card">
+                    <div class="cat-image">
+                        <img src="${cat.image}" alt="${cat.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Cat+Image'">
+                        ${cat.badge ? `<div class="cat-badge">${cat.badge}</div>` : ''}
+                        ${cat.discount ? `<div class="cat-discount">${cat.discount} OFF</div>` : ''}
+                    </div>
+                    <div class="cat-info">
+                        <h6 class="cat-title">${cat.name}</h6>
+                        <p class="cat-breed">${cat.breed} • ${cat.gender} • ${cat.age}</p>
+                        <p class="cat-breed text-muted">${cat.color}</p>
+                        <div class="cat-price">
+                            ${cat.oldPrice ? `<span class="old-price">$${cat.oldPrice}</span>` : ''}
+                            $${cat.price}
+                        </div>
+                        <div class="cat-actions">
+                            <button class="btn btn-outline-primary btn-cat-action" onclick="addToCart(${cat.id})">
+                                <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                            </button>
+                            <button class="btn btn-primary btn-cat-action" onclick="buyNow(${cat.id})">
+                                <i class="fas fa-shopping-bag me-1"></i>Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Load cats into sections
+    function loadCats() {
+        document.getElementById('latestCats').innerHTML = catsData.latest.map(createCatCard).join('');
+        document.getElementById('bestSellers').innerHTML = catsData.bestSellers.map(createCatCard).join('');
+        document.getElementById('newlyComing').innerHTML = catsData.newlyComing.map(createCatCard).join('');
+    }
+
+    // Filter functionality
+    function applyFilters() {
+        const nameFilter = document.getElementById('nameFilter').value.toLowerCase();
+        const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+        const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+        
+        const selectedBreeds = Array.from(document.querySelectorAll('input[type="checkbox"][value*="breed"]:checked')).map(cb => cb.value);
+        const selectedGenders = Array.from(document.querySelectorAll('input[type="checkbox"][value*="gender"]:checked')).map(cb => cb.value);
+        const selectedColors = Array.from(document.querySelectorAll('input[type="checkbox"][value*="color"]:checked')).map(cb => cb.value);
+        const selectedAges = Array.from(document.querySelectorAll('input[type="checkbox"][value*="age"]:checked')).map(cb => cb.value);
+
+        // Filter logic would go here
+        console.log('Filters applied:', { nameFilter, minPrice, maxPrice, selectedBreeds, selectedGenders, selectedColors, selectedAges });
+    }
+
+    // Event listeners
+    document.getElementById('applyFilters').addEventListener('click', applyFilters);
+    document.getElementById('clearFilters').addEventListener('click', function() {
+        document.querySelectorAll('.filter-sidebar input').forEach(input => {
+            if (input.type === 'checkbox') input.checked = false;
+            else input.value = '';
+        });
+        loadCats();
+    });
+
+    // Chat widget functionality
+    document.getElementById('minimizeChat').addEventListener('click', function() {
+        const chatBody = document.getElementById('chatBody');
+        chatBody.style.display = chatBody.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Initialize
+    loadCats();
+});
+
+// Global functions for cat actions
+function addToCart(catId) {
+    alert(`Cat ${catId} added to cart!`);
+}
+
+function buyNow(catId) {
+    alert(`Buying cat ${catId} now!`);
+}
+</script>
+{% endblock %}

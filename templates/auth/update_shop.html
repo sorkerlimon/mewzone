@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Shop - MewZone{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="fw-bold text-dark">Update Shop Details</h2>
+    <p class="text-muted">Complete your shop information</p>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="shop_name" class="form-label">Shop Name</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-store"></i></span>
+            <input type="text" class="form-control" id="shop_name" name="shop_name" value="{{ shop.shop_name }}" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Shop Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required>{{ shop.description }}</textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="profile_picture" class="form-label">Shop Profile Picture</label>
+        {% if shop.profile_picture %}
+            <div class="mb-2">
+                <img src="{{ shop.profile_picture.url }}" alt="Current profile picture" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                <p class="text-muted small">Current profile picture</p>
+            </div>
+        {% endif %}
+        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+    </div>
+
+    <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+            <input type="text" class="form-control" id="location" name="location" value="{{ shop.location }}" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="address" class="form-label">Full Address</label>
+        <textarea class="form-control" id="address" name="address" rows="2" required>{{ shop.address }}</textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="{{ shop.state }}" required>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" value="{{ shop.country }}" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="postal_code" class="form-label">Postal Code</label>
+            <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ shop.postal_code }}" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="facebook_page" class="form-label">Facebook Page URL</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-facebook"></i></span>
+            <input type="url" class="form-control" id="facebook_page" name="facebook_page" value="{{ shop.facebook_page }}">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="instagram_handle" class="form-label">Instagram Handle</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-instagram"></i></span>
+            <input type="text" class="form-control" id="instagram_handle" name="instagram_handle" value="{{ shop.instagram_handle }}" placeholder="@yourhandle">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="twitter_handle" class="form-label">Twitter Handle</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-twitter"></i></span>
+            <input type="text" class="form-control" id="twitter_handle" name="twitter_handle" value="{{ shop.twitter_handle }}" placeholder="@yourhandle">
+        </div>
+    </div>
+
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <strong>Status:</strong> 
+        {% if shop.is_approved %}
+            <span class="text-success">Your shop is approved and live!</span>
+        {% else %}
+            <span class="text-warning">Your shop is pending admin approval.</span>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-cat w-100 py-2 mb-3">
+        <i class="fas fa-save me-2"></i>Update Shop
+    </button>
+
+    <div class="text-center">
+        <p class="text-muted">
+            <a href="{% url 'login' %}" class="text-decoration-none">Back to Login</a>
+        </p>
+    </div>
+</form>
+{% endblock %}

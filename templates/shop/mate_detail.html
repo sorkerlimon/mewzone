@@ -1,0 +1,444 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}{{ mate.name }} - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<!-- Categories Modal -->
+<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="categoriesModalLabel"><i class="fas fa-th-large me-2"></i>Browse Categories</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="category-grid">
+                    {% for category in categories %}
+                    <a href="#" class="category-item"><i class="fas fa-th-large me-2"></i><span>{{ category.name }}</span><small class="text-muted">({{ category.breeds.count }} breeds)</small></a>
+                    {% empty %}<p class="text-muted">No categories available</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breeds Modal -->
+<div class="modal fade" id="breedsModal" tabindex="-1" aria-labelledby="breedsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="breedsModalLabel"><i class="fas fa-paw me-2"></i>Browse Breeds</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="breed-grid">
+                    {% for breed in breeds %}
+                    <a href="#" class="breed-item"><i class="fas fa-paw me-2"></i><span>{{ breed.name }}</span></a>
+                    {% empty %}<p class="text-muted">No breeds available</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mate Content -->
+<div class="container-fluid mt-3 mb-4">
+    <div class="row">
+        <!-- Left Column: Main Video/Image Display -->
+        <div class="col-lg-7 mb-4">
+            <div class="bg-white rounded shadow-sm position-relative">
+                {% with primary_video=videos|first primary_image=images|first %}
+                <!-- Main Display Area - Video First if available -->
+                <div class="main-media-container position-relative" style="height: 600px; background: #000; border-radius: 8px 8px 0 0;">
+                    {% if primary_video %}
+                    <!-- Video Display -->
+                    <video id="mainVideo" class="w-100 h-100" style="object-fit: contain;" controls autoplay muted preload="metadata">
+                        <source src="{{ primary_video.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <img id="mainImage" class="d-none" src="" alt="{{ mate.name }}">
+                    {% elif primary_image %}
+                    <!-- Image Display -->
+                    <img id="mainImage" src="{{ primary_image.image.url }}" class="img-fluid w-100 h-100" style="object-fit: contain;" alt="{{ mate.name }}">
+                    <video id="mainVideo" class="w-100 h-100 d-none" style="object-fit: contain;" controls preload="metadata"></video>
+                    {% else %}
+                    <!-- Placeholder -->
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <div class="text-center text-white">
+                            <i class="fas fa-heart fa-5x mb-3 opacity-50"></i>
+                            <p class="mb-0 opacity-75">No media available</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Thumbnail Gallery -->
+                {% if images.count > 1 or videos %}
+                <div class="p-3 bg-light">
+                    <div class="thumbnail-gallery d-flex gap-2 overflow-x-auto" style="scrollbar-width: thin;">
+                        {% for vid in videos %}
+                        <div class="thumb-item thumb-video active border border-primary rounded overflow-hidden flex-shrink-0" 
+                             data-type="video" 
+                             data-src="{{ vid.video.url }}" 
+                             style="width: 90px; height: 90px; cursor: pointer;">
+                            <div class="position-relative w-100 h-100 bg-dark">
+                                <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop" class="w-100 h-100 opacity-50" style="object-fit: cover;" alt="video">
+                                <span class="position-absolute top-50 start-50 translate-middle text-white">
+                                    <i class="fas fa-play-circle fa-2x"></i>
+                                </span>
+                                <span class="position-absolute bottom-0 start-0 w-100 bg-dark bg-opacity-75 text-white text-center small p-1">
+                                    <i class="fas fa-video me-1"></i>Video
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% for img in images %}
+                        <div class="thumb-item thumb-image {% if not primary_video and forloop.first %}active{% endif %} border rounded overflow-hidden flex-shrink-0" 
+                             data-type="image" 
+                             data-src="{{ img.image.url }}" 
+                             style="width: 90px; height: 90px; cursor: pointer;">
+                            <img src="{{ img.image.url }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ mate.name }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <!-- Right Column: All Details At a Glance -->
+        <div class="col-lg-5 mb-4">
+            <div class="bg-white rounded shadow-sm p-4 h-100" style="position: sticky; top: 20px;">
+                <!-- Title -->
+                <h2 class="mb-2" style="font-weight: 700; color: #2c3e50; font-size: 1.75rem;">{{ mate.name }}</h2>
+                
+                <!-- Breed & Gender Badges -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary px-3 py-2">{{ mate.breed.name }}</span>
+                    <span class="badge bg-secondary px-3 py-2">{{ mate.get_gender_display }}</span>
+                </div>
+
+                <!-- Rating -->
+                <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                    {% with rating=mate.avg_rating|default:0 %}
+                    <div class="me-2">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= rating|floatformat:0|add:"0" %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <span class="fw-bold me-1">{{ rating|floatformat:1 }}</span>
+                    <span class="text-muted">/ 5.0</span>
+                    {% if mate.review_count %}
+                    <span class="text-muted ms-2">({{ mate.review_count }} review{{ mate.review_count|pluralize }})</span>
+                    {% else %}
+                    <span class="text-muted ms-2">No Ratings</span>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Price -->
+                <div class="mb-4 pb-3 border-bottom">
+                    <div class="d-flex align-items-baseline gap-2 mb-2">
+                        <span class="h2 mb-0 text-primary fw-bold">${{ mate.mate_cost|floatformat:2 }}</span>
+                    </div>
+                    <small class="text-muted"><i class="fas fa-info-circle me-1"></i>Mate Service Cost</small>
+                </div>
+
+                <!-- Quick Details Grid -->
+                <div class="row g-2 mb-4">
+                    <div class="col-6">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small mb-1"><i class="fas fa-paw text-primary"></i> Breed</div>
+                            <div class="fw-semibold small">{{ mate.breed.name }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small mb-1"><i class="fas fa-venus-mars text-primary"></i> Gender</div>
+                            <div class="fw-semibold small">{{ mate.get_gender_display }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small mb-1"><i class="fas fa-palette text-primary"></i> Color</div>
+                            <div class="fw-semibold small">{{ mate.color }}</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-2 border rounded bg-light">
+                            <div class="text-muted small mb-1"><i class="fas fa-birthday-cake text-primary"></i> Age</div>
+                            <div class="fw-semibold small">{{ mate.age }} months</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description (Collapsible if long) -->
+                {% if mate.description %}
+                <div class="mb-4">
+                    <h6 class="mb-2 fw-semibold"><i class="fas fa-file-alt text-primary me-2"></i>Description</h6>
+                    <p class="text-muted small mb-0" style="line-height: 1.6;">{{ mate.description|truncatewords:30 }}</p>
+                    {% if mate.description|wordcount > 30 %}
+                    <button class="btn btn-sm btn-link text-primary p-0 mt-2" data-bs-toggle="collapse" data-bs-target="#fullDescription">Read more</button>
+                    <div class="collapse mt-2" id="fullDescription">
+                        <p class="text-muted small" style="line-height: 1.6;">{{ mate.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Shop Info -->
+                <div class="mb-4 p-3 border rounded bg-light">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+                            <div class="text-muted small mb-1">Sold By</div>
+                            <a href="{% url 'shop_detail' mate.shop.id %}" class="text-decoration-none fw-semibold text-primary">
+                                {{ mate.shop.shop_name }}
+                            </a>
+                        </div>
+                        <a href="{% url 'shop_detail' mate.shop.id %}" class="btn btn-sm btn-outline-primary">
+                            View Shop <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2 mb-3">
+                    <button class="btn btn-primary btn-lg py-3 fw-semibold">
+                        <i class="fas fa-envelope me-2"></i>Contact for Mating Service
+                    </button>
+                    <a href="{% url 'shop_detail' mate.shop.id %}" class="btn btn-outline-primary btn-lg py-3">
+                        <i class="fas fa-store me-2"></i>Visit Shop Profile
+                    </a>
+                </div>
+
+                <!-- Warranty/Return Info -->
+                <div class="mt-4 pt-3 border-top">
+                    <div class="d-flex align-items-center gap-3 small text-muted mb-2">
+                        <div><i class="fas fa-shield-alt text-success me-1"></i>Approved Mate</div>
+                        <div><i class="fas fa-check-circle text-success me-1"></i>Verified Seller</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="bg-white p-4 rounded shadow-sm">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h4 class="mb-0" style="color: #2c3e50; font-weight: 600;">
+                        <i class="fas fa-star text-warning me-2"></i>Ratings & Reviews
+                        {% if reviews %}<span class="badge bg-primary ms-2">{{ reviews|length }}</span>{% endif %}
+                    </h4>
+                </div>
+
+                {% if reviews %}
+                    <!-- Rating Breakdown -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded">
+                                <div class="h2 mb-1">
+                                    {% with rating=mate.avg_rating|default:0 %}{{ rating|floatformat:1 }}/5{% endwith %}
+                                </div>
+                                <div class="mb-2">
+                                    {% with rating=mate.avg_rating|default:0 %}
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= rating|floatformat:0|add:"0" %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% endwith %}
+                                </div>
+                                <small class="text-muted">{{ reviews|length }} Rating{{ reviews|length|pluralize }}</small>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            {% for review in reviews %}
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 35px; height: 35px; font-size: 0.8rem; font-weight: 600;">
+                                        {{ review.user.first_name|first }}{{ review.user.last_name|first }}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-semibold">{{ review.user.first_name }} {{ review.user.last_name }}</div>
+                                        <div class="text-warning">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= review.rating %}<i class="fas fa-star"></i>
+                                                {% else %}<i class="far fa-star"></i>{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <small class="text-muted">{{ review.created_at|date:"F d, Y" }}</small>
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-muted small">{{ review.comment }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <p class="text-muted mb-0">This mate has no reviews. Let others know what you think and be the first to write a review.</p>
+                    </div>
+                {% endif %}
+
+                <!-- Review Form -->
+                {% if user.is_authenticated %}
+                <div class="mt-4 pt-4 border-top">
+                    <h5 class="mb-3">Write a Review</h5>
+                    <form method="post" action="#">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Rating</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="">Select Rating</option>
+                                <option value="5">5 - Excellent</option>
+                                <option value="4">4 - Very Good</option>
+                                <option value="3">3 - Good</option>
+                                <option value="2">2 - Fair</option>
+                                <option value="1">1 - Poor</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Review</label>
+                            <textarea name="comment" class="form-control" rows="4" placeholder="Share your experience..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                        <small class="text-muted d-block mt-2">
+                            <i class="fas fa-info-circle me-1"></i>Your review will be pending approval.
+                        </small>
+                    </form>
+                </div>
+                {% else %}
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    <a href="{% url 'login' %}" class="text-decoration-none fw-semibold">Login</a> or 
+                    <a href="{% url 'register' %}" class="text-decoration-none fw-semibold">Register</a> to write a review.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'shop/partials/footer.html' %}
+
+<style>
+.thumb-item {
+    transition: all 0.3s ease;
+    border-width: 2px !important;
+}
+.thumb-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.thumb-item.active {
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+}
+.thumb-video.active {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 3px rgba(40,167,69,0.25);
+}
+.main-media-container video, .main-media-container img {
+    border-radius: 8px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const thumbItems = document.querySelectorAll('.thumb-item');
+    const mainImage = document.getElementById('mainImage');
+    const mainVideo = document.getElementById('mainVideo');
+    
+    // Show video first if available
+    {% with primary_video=videos|first %}
+    {% if primary_video %}
+    if (mainVideo && mainImage) {
+        mainVideo.classList.remove('d-none');
+        mainImage.classList.add('d-none');
+        mainVideo.src = '{{ primary_video.video.url }}';
+    }
+    {% endif %}
+    {% endwith %}
+
+    thumbItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Update active state
+            thumbItems.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const type = this.dataset.type;
+            const src = this.dataset.src;
+            
+            if (type === 'video') {
+                if (mainImage) mainImage.classList.add('d-none');
+                if (mainVideo) {
+                    mainVideo.classList.remove('d-none');
+                    mainVideo.src = src;
+                    mainVideo.play().catch(() => {});
+                }
+            } else {
+                if (mainVideo) {
+                    mainVideo.classList.add('d-none');
+                    mainVideo.pause();
+                }
+                if (mainImage) {
+                    mainImage.classList.remove('d-none');
+                    mainImage.src = src;
+                }
+            }
+        });
+    });
+
+    // Categories and Breeds Modal functionality
+    const categoriesBtn = document.getElementById('categoriesBtn');
+    const breedsBtn = document.getElementById('breedsBtn');
+    const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
+    const mobileBreedsBtn = document.getElementById('mobileBreedsBtn');
+    const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+    const breedsModal = new bootstrap.Modal(document.getElementById('breedsModal'));
+
+    if (categoriesBtn) categoriesBtn.addEventListener('click', (e) => { e.preventDefault(); categoriesModal.show(); });
+    if (breedsBtn) breedsBtn.addEventListener('click', (e) => { e.preventDefault(); breedsModal.show(); });
+    if (mobileCategoriesBtn) {
+        mobileCategoriesBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if (mobileNavMenu) { mobileNavMenu.classList.remove('show'); document.body.style.overflow = 'auto'; }
+            categoriesModal.show();
+        });
+    }
+    if (mobileBreedsBtn) {
+        mobileBreedsBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if (mobileNavMenu) { mobileNavMenu.classList.remove('show'); document.body.style.overflow = 'auto'; }
+            breedsModal.show();
+        });
+    }
+
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileNavMenu = document.getElementById('mobileNavMenu');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+    if (mobileMenuToggle && mobileNavMenu) {
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileNavMenu.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    if (closeMobileMenu && mobileNavMenu) {
+        closeMobileMenu.addEventListener('click', () => {
+            mobileNavMenu.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+    }
+});
+</script>
+{% endblock %}

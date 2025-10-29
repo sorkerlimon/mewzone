@@ -1,0 +1,190 @@
+<!-- E-commerce Header -->
+<div class="ecommerce-header bg-white shadow-sm">
+    <div class="container-fluid">
+        <div class="row align-items-center py-3">
+            <div class="col-md-3">
+                <h2 class="mb-0 text-primary">
+                    <i class="fas fa-cat me-2"></i>MewZone
+                </h2>
+            </div>
+            <div class="col-md-6">
+                <div class="search-bar">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for cats..." id="searchInput">
+                        <button class="btn btn-primary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 text-end d-none d-lg-block">
+                <div class="d-flex align-items-center justify-content-end gap-3">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-link text-decoration-none text-dark p-0 dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i> 
+                            {% if user.first_name or user.last_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.email|truncatechars:20 }}
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.email }}
+                                {% endif %}
+                            </h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="text-decoration-none text-dark">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <!-- Mobile Menu Button -->
+        <button class="navbar-toggler d-lg-none" type="button" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Desktop Navigation -->
+        <div class="navbar-nav me-auto d-none d-lg-flex">
+            <a class="nav-link" href="{% url 'browse_cats' %}">
+                <i class="fas fa-home me-2"></i> Home
+            </a>
+            <a class="nav-link" href="#" id="categoriesBtn">
+                <i class="fas fa-th-large me-2"></i> Categories
+            </a>
+            <a class="nav-link" href="#" id="breedsBtn">
+                <i class="fas fa-paw me-2"></i> Breeds
+            </a>
+            <a class="nav-link" href="{% url 'shop_list' %}">
+                <i class="fas fa-store me-2"></i> Shop
+            </a>
+            <a class="nav-link" href="{% url 'mate_list' %}">
+                <i class="fas fa-heart me-2"></i> Find a Mate
+            </a>
+            <a class="nav-link" href="#">
+                <i class="fas fa-info-circle me-2"></i> About Us
+            </a>
+            <a class="nav-link" href="#">
+                <i class="fas fa-envelope me-2"></i> Contact Us
+            </a>
+        </div>
+        
+        <!-- Desktop Contact -->
+        <div class="navbar-nav d-none d-lg-flex">
+            <span class="nav-link contact-info">
+                <i class="fas fa-phone me-2"></i> +880 1819-777288
+            </span>
+        </div>
+        
+        <!-- Mobile User Menu -->
+        <div class="navbar-nav d-lg-none">
+            {% if user.is_authenticated %}
+            <div class="dropdown">
+                <button class="nav-link btn btn-link text-white p-0 dropdown-toggle" type="button" id="mobileUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user me-1"></i> 
+                    {% if user.first_name or user.last_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        {{ user.email|truncatechars:15 }}
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserDropdown">
+                    <li><h6 class="dropdown-header">
+                        {% if user.first_name or user.last_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            {{ user.email }}
+                        {% endif %}
+                    </h6></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a class="nav-link" href="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt me-1"></i> Login
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Mobile Navigation Menu -->
+    <div class="mobile-nav-menu" id="mobileNavMenu">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <h5 class="mb-0">Menu</h5>
+                <button class="btn btn-sm btn-outline-light" id="closeMobileMenu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mobile-nav-items">
+                <a class="mobile-nav-link" href="{% url 'browse_cats' %}">
+                    <i class="fas fa-home me-2"></i> Home
+                </a>
+                <a class="mobile-nav-link" href="#" id="mobileCategoriesBtn">
+                    <i class="fas fa-th-large me-2"></i> Categories
+                </a>
+                <a class="mobile-nav-link" href="#" id="mobileBreedsBtn">
+                    <i class="fas fa-paw me-2"></i> Breeds
+                </a>
+                <a class="mobile-nav-link" href="{% url 'shop_list' %}">
+                    <i class="fas fa-store me-2"></i> Shop
+                </a>
+                <a class="mobile-nav-link" href="{% url 'mate_list' %}">
+                    <i class="fas fa-heart me-2"></i> Find a Mate
+                </a>
+                <div class="mobile-nav-divider"></div>
+                {% if user.is_authenticated %}
+                <div class="mobile-nav-user-info p-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-user-circle me-2" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <div class="fw-semibold">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    {{ user.email }}
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ user.email }}</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light w-100 mt-2">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </div>
+                {% else %}
+                <div class="mobile-nav-links p-3">
+                    <a href="{% url 'login' %}" class="btn btn-sm btn-primary w-100 mb-2">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-outline-light w-100">
+                        <i class="fas fa-user-plus me-2"></i>Register
+                    </a>
+                </div>
+                {% endif %}
+                <div class="mobile-nav-divider"></div>
+                <div class="mobile-nav-contact">
+                    <i class="fas fa-phone me-2"></i> +880 1819-777288
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+

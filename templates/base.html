@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MewZone - Cat Shop{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+    <style>
+        .cat-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .btn-cat {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+            border: none;
+            color: white;
+        }
+        .btn-cat:hover {
+            background: linear-gradient(45deg, #ff5252, #ff9800);
+            color: white;
+        }
+        
+        /* Password validation styles */
+        .is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+        
+        /* Password toggle button */
+        .btn-outline-secondary {
+            border-color: #6c757d;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        /* Modal Styles */
+        .modal {
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 25px 30px 20px;
+            position: relative;
+        }
+
+        .modal-header .btn-close {
+            filter: none;
+            opacity: 1;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .modal-header .btn-close:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 1);
+            color: white;
+        }
+
+        .modal-header .btn-close::before {
+            content: '×';
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            border: none;
+            padding: 0 30px 30px;
+        }
+
+        .btn-modal {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            color: white;
+        }
+
+        .btn-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modal:hover::before {
+            left: 100%;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-btn.google {
+            background: #fff;
+            color: #db4437;
+        }
+
+        .social-btn.apple {
+            background: #000;
+            color: #fff;
+        }
+
+        .form-check-input:checked {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.25);
+        }
+
+        .link-primary {
+            color: #ff6b6b !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link-primary:hover {
+            color: #4ecdc4 !important;
+            text-decoration: underline;
+        }
+
+        /* Modal animations */
+        .modal.fade .modal-dialog {
+            transform: scale(0.8) translateY(-50px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal.show .modal-dialog {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Hero section buttons */
+        .hero-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 35px;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+            color: white;
+        }
+
+        .hero-btn.outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .hero-btn.outline:hover {
+            background: white;
+            color: #ff6b6b;
+        }
+
+        /* Chat Widget Styles (from browse page) */
+        .chat-widget { z-index: 1000; }
+        .chat-icon { cursor: pointer; transition: all 0.3s ease; }
+        .chat-icon:hover { transform: scale(1.1); }
+        .chat-icon-circle {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            position: relative; animation: pulse 2s infinite;
+        }
+        .chat-notification { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; border-radius: 50%; background: #dc3545; color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        @keyframes pulse { 0%{box-shadow:0 4px 15px rgba(255,107,107,.4);} 50%{box-shadow:0 4px 25px rgba(255,107,107,.6);} 100%{box-shadow:0 4px 15px rgba(255,107,107,.4);} }
+        .chat-box { width: 350px; background:#fff; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,.2); overflow:hidden; }
+        .chat-header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color:#fff; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+        .chat-avatar { width:40px; height:40px; border-radius:50%; background: rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; margin-right:10px; }
+        .chat-body { height:300px; overflow-y:auto; padding:20px; background:#f8f9fa; }
+        .chat-message { margin-bottom:15px; display:flex; }
+        .chat-message .message-content { max-width:80%; padding:12px 16px; border-radius:18px; }
+        .chat-message.received .message-content { background:#fff; border-bottom-left-radius:4px; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+        .chat-message.sent { justify-content:flex-end; }
+        .chat-message.sent .message-content { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color:#fff; border-bottom-right-radius:4px; }
+        .message-time { font-size:11px; opacity:.7; display:block; margin-top:5px; }
+        .chat-footer { padding:15px 20px; background:#fff; border-top:1px solid #e9ecef; }
+        .chat-footer .input-group { border-radius:25px; overflow:hidden; }
+    </style>
+</head>
+<body class="cat-bg min-vh-100">
+    <div class="container-fluid">
+        <div class="row min-vh-100">
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-cat me-3"></i>MewZone
+                    </h1>
+                    <p class="lead mb-4">Your purr-fect destination for adorable cats</p>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-paw fa-3x mb-2"></i>
+                            <h5>Quality Cats</h5>
+                            <p>Healthy, well-cared for felines</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-heart fa-3x mb-2"></i>
+                            <h5>Trusted Sellers</h5>
+                            <p>Verified and approved shops</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-shield-alt fa-3x mb-2"></i>
+                            <h5>Safe Platform</h5>
+                            <p>Secure transactions and reviews</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 d-flex align-items-center justify-content-center">
+                <div class="card card-shadow w-100" style="max-width: 500px;">
+                    <div class="card-body p-5">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget (same as browse page) -->
+    <div class="chat-widget position-fixed bottom-0 end-0 p-3">
+        <div class="chat-icon" id="chatIcon">
+            <div class="chat-icon-circle">
+                <i class="fas fa-comments"></i>
+                <span class="chat-notification">1</span>
+            </div>
+        </div>
+        <div class="chat-box" id="chatBox" style="display:none;">
+            <div class="chat-header">
+                <div class="d-flex align-items-center">
+                    <div class="chat-avatar"><i class="fas fa-cat"></i></div>
+                    <div class="chat-info">
+                        <h6 class="mb-0">MewZone Support</h6>
+                        <small class="text-white-50">Online now</small>
+                    </div>
+                </div>
+                <button class="btn btn-sm btn-outline-light" id="closeChat"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-message received">
+                    <div class="message-content">
+                        <p>Hello! How can I help you today? 🐱</p>
+                        <small class="message-time">Now</small>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Type your message..." id="chatInput">
+                    <button class="btn btn-primary" type="button" id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal removed: route to login page instead -->
+
+    <!-- Register Modal removed: route to register page instead -->
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Auto-hide alerts after 5 seconds
+            $('.alert').each(function() {
+                var alert = $(this);
+                setTimeout(function() {
+                    alert.fadeOut('slow', function() {
+                        alert.remove();
+                    });
+                }, 5000);
+            });
+
+            // Password toggle functionality
+            $('#toggleLoginPassword').click(function() {
+                const passwordField = $('#loginPassword');
+                const icon = $(this).find('i');
+                if (passwordField.attr('type') === 'password') {
+                    passwordField.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#toggleRegisterPassword').click(function() {
+                const passwordField = $('#registerPassword');
+                const icon = $(this).find('i');
+                if (passwordField.attr('type') === 'password') {
+                    passwordField.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#toggleConfirmPassword').click(function() {
+                const passwordField = $('#confirmPassword');
+                const icon = $(this).find('i');
+                if (passwordField.attr('type') === 'password') {
+                    passwordField.attr('type', 'text');
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordField.attr('type', 'password');
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            // Password validation
+            function validatePasswords() {
+                const password = $('#registerPassword').val();
+                const confirmPassword = $('#confirmPassword').val();
+                
+                if (password.length < 8) {
+                    $('#registerPassword').addClass('is-invalid');
+                    return false;
+                } else {
+                    $('#registerPassword').removeClass('is-invalid');
+                }
+                
+                if (password !== confirmPassword) {
+                    $('#confirmPassword').addClass('is-invalid');
+                    return false;
+                } else {
+                    $('#confirmPassword').removeClass('is-invalid');
+                }
+                
+                return true;
+            }
+
+            $('#registerPassword, #confirmPassword').on('input', validatePasswords);
+
+            // Form submission validation
+            $('form').on('submit', function(e) {
+                if (!validatePasswords()) {
+                    e.preventDefault();
+                }
+            });
+
+            // Chat widget interactions
+            const chatIcon = document.getElementById('chatIcon');
+            const chatBox = document.getElementById('chatBox');
+            const closeChat = document.getElementById('closeChat');
+            const chatInput = document.getElementById('chatInput');
+            const sendMessage = document.getElementById('sendMessage');
+            function addMessage(text, type) {
+                const body = document.getElementById('chatBody');
+                const item = document.createElement('div');
+                item.className = `chat-message ${type}`;
+                const now = new Date();
+                const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                item.innerHTML = `<div class=\"message-content\"><p>${text}</p><small class=\"message-time\">${time}</small></div>`;
+                body.appendChild(item);
+                body.scrollTop = body.scrollHeight;
+            }
+            if (chatIcon && chatBox) chatIcon.addEventListener('click', () => { chatIcon.style.display='none'; chatBox.style.display='block'; });
+            if (closeChat && chatBox && chatIcon) closeChat.addEventListener('click', () => { chatBox.style.display='none'; chatIcon.style.display='block'; });
+            if (sendMessage && chatInput) sendMessage.addEventListener('click', () => { const msg = chatInput.value.trim(); if (msg){ addMessage(msg, 'sent'); chatInput.value=''; }});
+            if (chatInput) chatInput.addEventListener('keypress', (e) => { if(e.key==='Enter'){ const msg = chatInput.value.trim(); if(msg){ addMessage(msg,'sent'); chatInput.value=''; }}});
+        });
+    </script>
+</body>
+</html>

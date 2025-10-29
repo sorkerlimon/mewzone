@@ -1,0 +1,251 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}Find a Mate - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<!-- Categories Modal -->
+<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="categoriesModalLabel">
+                    <i class="fas fa-th-large me-2"></i>Browse Categories
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3">Popular Categories</h6>
+                        <div class="category-grid">
+                            {% for category in categories %}
+                            <a href="#" class="category-item">
+                                <i class="fas fa-th-large me-2"></i>
+                                <span>{{ category.name }}</span>
+                                <small class="text-muted">({{ category.breeds.count }} breeds)</small>
+                            </a>
+                            {% empty %}
+                            <p class="text-muted">No categories available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3">All Categories</h6>
+                        <div class="category-list">
+                            {% for category in categories %}
+                            <a href="#" class="category-link">
+                                <i class="fas fa-circle me-2"></i>
+                                <span>{{ category.name }}</span>
+                                <span class="badge bg-primary rounded-pill">{{ category.breeds.count }}</span>
+                            </a>
+                            {% empty %}
+                            <p class="text-muted">No categories available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breeds Modal -->
+<div class="modal fade" id="breedsModal" tabindex="-1" aria-labelledby="breedsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="breedsModalLabel">
+                    <i class="fas fa-paw me-2"></i>Browse Breeds
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3">Popular Breeds</h6>
+                        <div class="breed-grid">
+                            {% for breed in breeds %}
+                            <a href="#" class="breed-item">
+                                <i class="fas fa-paw me-2"></i>
+                                <span>{{ breed.name }}</span>
+                            </a>
+                            {% empty %}
+                            <p class="text-muted">No breeds available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-primary mb-3">All Breeds</h6>
+                        <div class="breed-list">
+                            {% for breed in breeds %}
+                                <a href="#" class="breed-link">
+                                    <i class="fas fa-circle me-2"></i>
+                                    <span>{{ breed.name }}</span>
+                                </a>
+                            {% empty %}
+                                <p class="text-muted">No breeds available</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content: Mates Grid -->
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-0">
+            <i class="fas fa-heart text-primary me-2"></i>Find a Mate
+        </h3>
+        <span class="text-muted">{% if mates %}{{ mates|length }}{% else %}0{% endif %} mates available</span>
+    </div>
+
+    <div class="row">
+        {% for mate in mates %}
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shop-card h-100 shadow-sm">
+                {% with primary_image=mate.images.all|first %}
+                <div class="position-relative">
+                    {% if primary_image %}
+                    <img src="{{ primary_image.image.url }}" class="card-img-top shop-image" alt="{{ mate.name }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top shop-image d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                        <i class="fas fa-heart fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <span class="badge bg-success position-absolute top-0 start-0 m-2">Approved</span>
+                </div>
+                {% endwith %}
+                <div class="card-body">
+                    <h6 class="card-title shop-title mb-2">{{ mate.name }}</h6>
+                    <p class="card-text text-muted shop-meta mb-2">
+                        <i class="fas fa-paw me-1 text-primary"></i>{{ mate.breed.name }} • {{ mate.get_gender_display }}
+                    </p>
+                    <div class="d-flex align-items-center mb-2 rating">
+                        {% with rating=mate.avg_rating|default:0 %}
+                        <div class="me-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= rating|floatformat:0|add:"0" %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted">{{ rating|floatformat:1 }}/5.0</small>
+                        {% if mate.review_count %}
+                        <small class="text-muted ms-1">({{ mate.review_count }})</small>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <small class="text-muted d-block">Age: {{ mate.age }} months</small>
+                            <strong class="text-primary h5 mb-0">${{ mate.mate_cost|floatformat:2 }}</strong>
+                        </div>
+                    </div>
+                    <a href="{% url 'mate_detail' mate.id %}" class="btn btn-sm btn-outline-primary w-100">
+                        <i class="fas fa-eye me-1"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">No mates available yet.</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% include 'shop/partials/footer.html' %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Categories and Breeds Modal functionality
+    const categoriesBtn = document.getElementById('categoriesBtn');
+    const breedsBtn = document.getElementById('breedsBtn');
+    const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
+    const mobileBreedsBtn = document.getElementById('mobileBreedsBtn');
+    const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+    const breedsModal = new bootstrap.Modal(document.getElementById('breedsModal'));
+
+    if (categoriesBtn) {
+        categoriesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            categoriesModal.show();
+        });
+    }
+
+    if (breedsBtn) {
+        breedsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            breedsModal.show();
+        });
+    }
+
+    if (mobileCategoriesBtn) {
+        mobileCategoriesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if (mobileNavMenu) {
+                mobileNavMenu.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+            categoriesModal.show();
+        });
+    }
+
+    if (mobileBreedsBtn) {
+        mobileBreedsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const mobileNavMenu = document.getElementById('mobileNavMenu');
+            if (mobileNavMenu) {
+                mobileNavMenu.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+            breedsModal.show();
+        });
+    }
+
+    // Mobile menu toggle functionality
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileNavMenu = document.getElementById('mobileNavMenu');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+    if (mobileMenuToggle && mobileNavMenu) {
+        mobileMenuToggle.addEventListener('click', function() {
+            mobileNavMenu.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
+    if (closeMobileMenu && mobileNavMenu) {
+        closeMobileMenu.addEventListener('click', function() {
+            mobileNavMenu.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        });
+    }
+
+    if (mobileNavMenu) {
+        mobileNavMenu.addEventListener('click', function(e) {
+            if (e.target === mobileNavMenu) {
+                mobileNavMenu.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,39 @@
+{% extends 'shop/base_ecommerce.html' %}
+{% block title %}Your Cart - MewZone{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h3 class="mb-4">Shopping Cart</h3>
+  <div class="bg-white p-3 rounded shadow-sm">
+    {% if items %}
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead><tr><th>Product</th><th class="text-center">Qty</th><th class="text-end">Price</th><th class="text-end">Total</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.product.name }}</td>
+            <td class="text-center">{{ item.qty }}</td>
+            <td class="text-end">${{ item.price|floatformat:2 }}</td>
+            <td class="text-end">${{ item.line_total|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="text-end">Grand Total</th>
+            <th class="text-end">${{ total|floatformat:2 }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="text-end">
+      <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+    </div>
+    {% else %}
+    <p class="mb-0 text-muted">Your cart is empty.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+

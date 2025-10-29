@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - MewZone{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="fw-bold text-dark">Join MewZone!</h2>
+    <p class="text-muted">Create your account to start your cat journey</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="first_name" class="form-label">First Name</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Last Name</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="password1" class="form-label">Password</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" class="form-control" id="password1" name="password1" placeholder="Create a strong password" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword1">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="invalid-feedback" id="password1Error"></div>
+    </div>
+
+    <div class="mb-3">
+        <label for="password2" class="form-label">Confirm Password</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password" required>
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="invalid-feedback" id="password2Error"></div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label">Account Type</label>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="role" id="normal_user" value="NORMAL" checked>
+                    <label class="form-check-label" for="normal_user">
+                        <i class="fas fa-user me-2"></i>Normal User
+                        <small class="d-block text-muted">Browse and buy cats</small>
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="role" id="seller" value="SELLER">
+                    <label class="form-check-label" for="seller">
+                        <i class="fas fa-store me-2"></i>Seller
+                        <small class="d-block text-muted">Sell cats and manage shop</small>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="terms" required>
+        <label class="form-check-label" for="terms">
+            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-cat w-100 py-2 mb-3">
+        <i class="fas fa-user-plus me-2"></i>Create Account
+    </button>
+
+    <div class="text-center">
+        <p class="text-muted">Already have an account? 
+            <a href="{% url 'login' %}" class="text-decoration-none fw-bold">Sign in here</a>
+        </p>
+    </div>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const togglePassword2 = document.getElementById('togglePassword2');
+    const password1Error = document.getElementById('password1Error');
+    const password2Error = document.getElementById('password2Error');
+    const form = document.querySelector('form');
+
+    // Password toggle functionality
+    togglePassword1.addEventListener('click', function() {
+        const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+        password1.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    togglePassword2.addEventListener('click', function() {
+        const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+        password2.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    // Password validation function
+    function validatePasswords() {
+        let isValid = true;
+        
+        // Clear previous errors
+        password1.classList.remove('is-invalid');
+        password2.classList.remove('is-invalid');
+        password1Error.textContent = '';
+        password2Error.textContent = '';
+
+        // Check password strength
+        if (password1.value.length < 8) {
+            password1.classList.add('is-invalid');
+            password1Error.textContent = 'Password must be at least 8 characters long';
+            isValid = false;
+        }
+
+        // Check if passwords match
+        if (password1.value !== password2.value) {
+            password2.classList.add('is-invalid');
+            password2Error.textContent = 'Passwords do not match';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    // Real-time validation
+    password1.addEventListener('input', validatePasswords);
+    password2.addEventListener('input', validatePasswords);
+
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        if (!validatePasswords()) {
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = document.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

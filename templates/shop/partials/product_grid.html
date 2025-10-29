@@ -1,0 +1,48 @@
+<div class="row">
+  {% for product in products %}
+  <div class="col-lg-3 col-md-6 mb-4">
+    <div class="cat-card">
+      <div class="cat-image">
+        {% with image=product.images.all|first %}
+          {% if image %}
+            <img src="{{ image.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=200&fit=crop" alt="{{ product.name }}">
+          {% endif %}
+        {% endwith %}
+        {% if product.discount_percentage > 0 %}
+          <div class="cat-discount">{{ product.discount_percentage }}% OFF</div>
+        {% endif %}
+      </div>
+      <div class="cat-info">
+        <h6 class="cat-title"><a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">{{ product.name }}</a></h6>
+        <p class="cat-breed d-flex justify-content-between">
+          <span>{{ product.breed.name }} • {{ product.get_gender_display }}</span>
+          <span class="text-warning">
+            {% with rating=product.avg_rating|default:0 %}
+              {% for i in "12345" %}
+                {% if forloop.counter <= rating %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+              {% endfor %}
+              <small class="text-muted">({{ product.review_count|default:0 }})</small>
+            {% endwith %}
+          </span>
+        </p>
+        <div class="cat-price">
+          {% if product.discount_percentage > 0 %}
+            <span class="old-price">${{ product.price }}</span> ${{ product.discounted_price|floatformat:2 }}
+          {% else %}
+            ${{ product.price|floatformat:2 }}
+          {% endif %}
+        </div>
+        <div class="cat-actions">
+          <a href="{% url 'add_to_cart' product.id %}" class="btn btn-outline-primary btn-cat-action"><i class="fas fa-cart-plus me-1"></i>Add to Cart</a>
+          <a href="{% url 'product_detail' product.id %}" class="btn btn-primary btn-cat-action"><i class="fas fa-shopping-bag me-1"></i>Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center"><p class="text-muted">No products match your filters.</p></div>
+  {% endfor %}
+</div>
+

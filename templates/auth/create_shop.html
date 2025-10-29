@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Shop - MewZone{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="fw-bold text-dark">Create Your Shop</h2>
+    <p class="text-muted">Set up your cat shop to start selling</p>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="mb-3">
+        <label for="shop_name" class="form-label">Shop Name</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-store"></i></span>
+            <input type="text" class="form-control" id="shop_name" name="shop_name" placeholder="Enter your shop name" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Shop Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe your shop and what makes it special..." required></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="profile_picture" class="form-label">Shop Profile Picture</label>
+        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+        <div class="form-text">Upload a profile picture for your shop (optional)</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+            <input type="text" class="form-control" id="location" name="location" placeholder="e.g., New York, NY" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="address" class="form-label">Full Address</label>
+        <textarea class="form-control" id="address" name="address" rows="2" placeholder="Enter your complete business address" required></textarea>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="city" class="form-label">City</label>
+            <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="state" class="form-label">State</label>
+            <input type="text" class="form-control" id="state" name="state" placeholder="Enter state" required>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input type="text" class="form-control" id="country" name="country" placeholder="Enter country" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="postal_code" class="form-label">Postal Code</label>
+            <input type="text" class="form-control" id="postal_code" name="postal_code" placeholder="Enter postal code" required>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="facebook_page" class="form-label">Facebook Page URL</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-facebook"></i></span>
+            <input type="url" class="form-control" id="facebook_page" name="facebook_page" placeholder="https://facebook.com/yourpage">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="instagram_handle" class="form-label">Instagram Handle</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-instagram"></i></span>
+            <input type="text" class="form-control" id="instagram_handle" name="instagram_handle" placeholder="@yourhandle">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="twitter_handle" class="form-label">Twitter Handle</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fab fa-twitter"></i></span>
+            <input type="text" class="form-control" id="twitter_handle" name="twitter_handle" placeholder="@yourhandle">
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Note:</strong> Your shop will be reviewed by our admin team before it goes live. You'll receive an email notification once approved.
+    </div>
+
+    <button type="submit" class="btn btn-cat w-100 py-2 mb-3">
+        <i class="fas fa-store me-2"></i>Create Shop
+    </button>
+
+    <div class="text-center">
+        <p class="text-muted">
+            <a href="{% url 'login' %}" class="text-decoration-none">Back to Login</a>
+        </p>
+    </div>
+</form>
+{% endblock %}

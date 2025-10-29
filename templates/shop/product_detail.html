@@ -1,0 +1,183 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}{{ product.name }} - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<!-- Categories Modal -->
+<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="categoriesModalLabel"><i class="fas fa-th-large me-2"></i>Browse Categories</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="category-grid">
+                    {% for category in categories %}
+                    <a href="#" class="category-item"><i class="fas fa-th-large me-2"></i><span>{{ category.name }}</span><small class="text-muted">({{ category.breeds.count }} breeds)</small></a>
+                    {% empty %}<p class="text-muted">No categories available</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Breeds Modal -->
+<div class="modal fade" id="breedsModal" tabindex="-1" aria-labelledby="breedsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="breedsModalLabel"><i class="fas fa-paw me-2"></i>Browse Breeds</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="breed-grid">
+                    {% for breed in breeds %}
+                    <a href="#" class="breed-item"><i class="fas fa-paw me-2"></i><span>{{ breed.name }}</span><small class="text-muted">({{ breed.products.count }} cats)</small></a>
+                    {% empty %}<p class="text-muted">No breeds available</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Content -->
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="bg-white p-3 rounded shadow-sm">
+        {% with image=images|first %}
+        <div class="mb-3 position-relative">
+          {% if image %}
+          <img id="mainImage" src="{{ image.image.url }}" class="img-fluid rounded w-100" style="max-height:520px; object-fit:cover;" alt="{{ product.name }}">
+          {% else %}
+          <img id="mainImage" src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=800&h=600&fit=crop" class="img-fluid rounded w-100" style="max-height:520px; object-fit:cover;" alt="{{ product.name }}">
+          {% endif %}
+          <video id="mainVideo" class="w-100 rounded d-none" style="max-height:520px; object-fit:cover;" controls preload="metadata"></video>
+        </div>
+        {% endwith %}
+        <div class="d-flex flex-wrap gap-2 media-thumbs">
+          {% for img in images %}
+          <div class="thumb-item border rounded" data-type="image" data-src="{{ img.image.url }}" style="width:70px; height:70px; cursor:pointer; overflow:hidden;">
+            <img src="{{ img.image.url }}" class="w-100 h-100" style="object-fit:cover;" alt="{{ product.name }}">
+          </div>
+          {% endfor %}
+          {% for vid in videos %}
+          <div class="thumb-item position-relative border rounded" data-type="video" data-src="{{ vid.video.url }}" data-poster="{% if vid.thumbnail %}{{ vid.thumbnail.url }}{% endif %}" style="width:70px; height:70px; cursor:pointer; overflow:hidden;">
+            <img src="{% if vid.thumbnail %}{{ vid.thumbnail.url }}{% else %}https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop{% endif %}" class="w-100 h-100" style="object-fit:cover;" alt="video">
+            <span class="position-absolute top-50 start-50 translate-middle bg-dark bg-opacity-50 text-white rounded-circle d-flex align-items-center justify-content-center" style="width:26px; height:26px;"><i class="fas fa-play"></i></span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="bg-white p-4 rounded shadow-sm h-100">
+        <h3 class="mb-1">{{ product.name }}</h3>
+        <div class="text-muted mb-2">{{ product.breed.name }} • {{ product.get_gender_display }}</div>
+        <div class="mb-3">
+          {% if product.discount_percentage > 0 %}
+          <div class="d-flex align-items-baseline gap-2">
+            <span class="text-muted text-decoration-line-through">${{ product.price|floatformat:2 }}</span>
+            <span class="h4 mb-0 text-danger">${{ product.discounted_price|floatformat:2 }}</span>
+          </div>
+          <small class="text-success">{{ product.discount_percentage }}% OFF</small>
+          {% else %}
+          <span class="h4">${{ product.price|floatformat:2 }}</span>
+          {% endif %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Quantity</label>
+          <div class="input-group" style="max-width:220px;">
+            <input type="number" min="1" value="1" id="qty" class="form-control">
+            <a class="btn btn-outline-primary" id="addToCart" href="#">Add to Cart</a>
+            <a class="btn btn-primary" id="buyNow" href="#">Buy Now</a>
+          </div>
+        </div>
+        <ul class="list-unstyled small text-muted mb-3">
+          <li><strong>Color:</strong> {{ product.color }}</li>
+          <li><strong>Eye color:</strong> {{ product.eye_color }}</li>
+          <li><strong>Fur type:</strong> {{ product.get_fur_type_display }}</li>
+          <li><strong>Ready to go:</strong> {% if product.ready_to_go %}Yes{% else %}No{% endif %}</li>
+          <li><strong>Pickup:</strong> {% if product.available_for_pickup %}Available{% else %}N/A{% endif %} • <strong>Delivery:</strong> {% if product.available_for_delivery %}Available{% else %}N/A{% endif %}</li>
+        </ul>
+        <p class="mb-0">{{ product.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="bg-white p-4 rounded shadow-sm">
+        <h5 class="mb-3">Reviews</h5>
+        {% for r in reviews %}
+        <div class="border-bottom py-2">
+          <strong>{{ r.user.first_name }} {{ r.user.last_name }}</strong>
+          <span class="ms-2 text-warning">{% for i in "12345" %}{% if forloop.counter <= r.rating %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}{% endfor %}</span>
+          <div class="small text-muted">{{ r.created_at|date:"M d, Y" }}</div>
+          <p class="mb-0">{{ r.comment }}</p>
+        </div>
+        {% empty %}
+        <p class="text-muted">No reviews yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include 'shop/partials/footer.html' %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // thumbnail gallery
+  const mainImg = document.getElementById('mainImage');
+  const mainVideo = document.getElementById('mainVideo');
+  function showImage(src){
+    if (!src) return;
+    if (mainVideo) { mainVideo.classList.add('d-none'); mainVideo.pause(); mainVideo.removeAttribute('src'); mainVideo.load(); }
+    if (mainImg) { mainImg.classList.remove('d-none'); mainImg.src = src; }
+  }
+  function showVideo(src, poster){
+    if (!src) return;
+    if (mainImg) mainImg.classList.add('d-none');
+    if (mainVideo) {
+      if (poster) mainVideo.setAttribute('poster', poster); else mainVideo.removeAttribute('poster');
+      mainVideo.classList.remove('d-none');
+      mainVideo.src = src; mainVideo.load();
+      mainVideo.play().catch(()=>{});
+    }
+  }
+  document.querySelectorAll('.thumb-item').forEach(t => {
+    t.addEventListener('click', () => {
+      const type = t.dataset.type || 'image';
+      const src = t.dataset.src;
+      const poster = t.dataset.poster;
+      if (type === 'video') { showVideo(src, poster); }
+      else { showImage(src); }
+    });
+  });
+  // mobile nav + modals
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const mobileNavMenu = document.getElementById('mobileNavMenu');
+  const closeMobileMenu = document.getElementById('closeMobileMenu');
+  if (mobileMenuToggle && mobileNavMenu) mobileMenuToggle.addEventListener('click', ()=>{ mobileNavMenu.classList.add('show'); document.body.style.overflow='hidden'; });
+  if (closeMobileMenu && mobileNavMenu) closeMobileMenu.addEventListener('click', ()=>{ mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; });
+  const categoriesBtn = document.getElementById('categoriesBtn');
+  const breedsBtn = document.getElementById('breedsBtn');
+  const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
+  const mobileBreedsBtn = document.getElementById('mobileBreedsBtn');
+  const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
+  const breedsModal = new bootstrap.Modal(document.getElementById('breedsModal'));
+  if (categoriesBtn) categoriesBtn.addEventListener('click', (e)=>{ e.preventDefault(); categoriesModal.show(); });
+  if (breedsBtn) breedsBtn.addEventListener('click', (e)=>{ e.preventDefault(); breedsModal.show(); });
+  if (mobileCategoriesBtn) mobileCategoriesBtn.addEventListener('click', (e)=>{ e.preventDefault(); mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; categoriesModal.show(); });
+  if (mobileBreedsBtn) mobileBreedsBtn.addEventListener('click', (e)=>{ e.preventDefault(); mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; breedsModal.show(); });
+
+  // cart actions
+  const qtyEl = document.getElementById('qty');
+  const addBtn = document.getElementById('addToCart');
+  const buyBtn = document.getElementById('buyNow');
+  function toInt(v){ try { return Math.max(parseInt(v||'1'), 1); } catch { return 1; } }
+  if (addBtn) addBtn.addEventListener('click', function(e){ e.preventDefault(); const q = toInt(qtyEl.value); window.location.href = '{% url 'add_to_cart' product.id %}?qty=' + q; });
+  if (buyBtn) buyBtn.addEventListener('click', function(e){ e.preventDefault(); const q = toInt(qtyEl.value); window.location.href = '{% url 'add_to_cart' product.id %}?qty=' + q + '&next=checkout'; });
+});
+</script>
+{% endblock %}
+
+
