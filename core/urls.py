@@ -26,6 +26,8 @@ urlpatterns = [
     path('cart/', views.cart_view, name='cart'),
     path('cart/add/<uuid:product_id>/', views.add_to_cart_view, name='add_to_cart'),
     path('checkout/', views.checkout_view, name='checkout'),
+    path('products/add/', views.add_product_view, name='add_product'),
+    path('products/my-products/', views.my_products_view, name='my_products'),
     
     # Mate pages
     path('mates/', views.mate_list_view, name='mate_list'),

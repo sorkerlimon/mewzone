@@ -6,8 +6,8 @@ from .models import User, OTPVerification
 from .utils import send_otp_email, generate_otp
 from .decorators import seller_required, no_shop_required, has_shop_required, otp_session_required, verified_user_required
 from django.utils import timezone
-from datetime import timedelta
-from decimal import Decimal
+from datetime import timedelta, datetime
+from decimal import Decimal, InvalidOperation
 from django.http import JsonResponse
 from django.db.models import Avg, Count
 
@@ -185,6 +185,7 @@ def update_shop_view(request):
     """Update shop view"""
     from shop.models import SellerShop
     shop = request.user.seller_shop
+    approved_product_count = shop.products.filter(is_approved=True).count()
     
     if request.method == 'POST':
         # Update shop logic here
@@ -206,7 +207,231 @@ def update_shop_view(request):
         messages.success(request, 'Shop updated successfully!')
         return redirect('update_shop')
     
-    return render(request, 'auth/update_shop.html', {'shop': shop})
+    context = {
+        'shop': shop,
+        'approved_product_count': approved_product_count,
+    }
+    return render(request, 'auth/update_shop.html', context)
+
+
+@seller_required
+@has_shop_required
+def add_product_view(request):
+    """Allow sellers to submit new products for approval"""
+    from shop.models import Product, Breed, ProductImage, ProductVideo, Category, ProductCategory, validate_video_file_size
+    from django.core.exceptions import ValidationError
+
+    shop = request.user.seller_shop
+    breeds = Breed.objects.filter(is_active=True).order_by('name')
+    categories = Category.objects.filter(is_active=True).order_by('name')
+    fur_types = Product.FUR_TYPE_CHOICES
+    gender_choices = Product.GENDER_CHOICES
+
+    default_form = {
+        'name': '',
+        'breed': '',
+        'gender': gender_choices[0][0] if gender_choices else '',
+        'color': '',
+        'eye_color': '',
+        'fur_type': fur_types[0][0] if fur_types else '',
+        'date_of_birth': '',
+        'location': shop.location,
+        'ready_to_go': False,
+        'available_for_pickup': True,
+        'available_for_delivery': False,
+        'price': '',
+        'discount_percentage': '0',
+        'description': '',
+        'additional_notes': '',
+        'other_services': '',
+    }
+
+    form_data = default_form.copy()
+
+    if request.method == 'POST':
+        form_data = form_data | {
+            'name': request.POST.get('name', '').strip(),
+            'breed': request.POST.get('breed', ''),
+            'gender': request.POST.get('gender', gender_choices[0][0] if gender_choices else ''),
+            'color': request.POST.get('color', '').strip(),
+            'eye_color': request.POST.get('eye_color', '').strip(),
+            'fur_type': request.POST.get('fur_type', fur_types[0][0] if fur_types else ''),
+            'date_of_birth': request.POST.get('date_of_birth', ''),
+            'location': request.POST.get('location', '').strip() or shop.location,
+            'ready_to_go': request.POST.get('ready_to_go') == 'on',
+            'available_for_pickup': request.POST.get('available_for_pickup') == 'on',
+            'available_for_delivery': request.POST.get('available_for_delivery') == 'on',
+            'price': request.POST.get('price', '').strip(),
+            'discount_percentage': request.POST.get('discount_percentage', '0').strip() or '0',
+            'description': request.POST.get('description', '').strip(),
+            'additional_notes': request.POST.get('additional_notes', '').strip(),
+            'other_services': request.POST.get('other_services', '').strip(),
+        }
+
+        # Validation
+        errors = []
+
+        if not form_data['name']:
+            errors.append('Please provide a product name.')
+
+        try:
+            breed = Breed.objects.get(id=form_data['breed'])
+        except (Breed.DoesNotExist, ValueError):
+            breed = None
+            errors.append('Please choose a valid breed from the list.')
+
+        try:
+            dob = datetime.strptime(form_data['date_of_birth'], '%Y-%m-%d').date()
+        except (ValueError, TypeError):
+            dob = None
+            errors.append('Please provide a valid date of birth.')
+
+        try:
+            price = Decimal(form_data['price'])
+            if price < 0:
+                raise InvalidOperation
+        except (InvalidOperation, ValueError):
+            price = None
+            errors.append('Price must be a positive amount.')
+
+        try:
+            discount = int(form_data['discount_percentage'] or 0)
+            if discount < 0 or discount > 100:
+                raise ValueError
+        except ValueError:
+            discount = 0
+            errors.append('Discount percentage must be between 0 and 100.')
+
+        if not form_data['description']:
+            errors.append('Please include a product description.')
+
+        if not errors and breed and dob and price is not None:
+            product = Product.objects.create(
+                shop=shop,
+                name=form_data['name'],
+                breed=breed,
+                gender=form_data['gender'],
+                color=form_data['color'],
+                eye_color=form_data['eye_color'],
+                fur_type=form_data['fur_type'],
+                date_of_birth=dob,
+                location=form_data['location'],
+                ready_to_go=form_data['ready_to_go'],
+                available_for_pickup=form_data['available_for_pickup'],
+                available_for_delivery=form_data['available_for_delivery'],
+                price=price,
+                discount_percentage=discount,
+                description=form_data['description'],
+                additional_notes=form_data['additional_notes'] or None,
+                other_services=form_data['other_services'] or None,
+            )
+
+            images = request.FILES.getlist('images')
+            for index, image_file in enumerate(images[:3]):
+                ProductImage.objects.create(
+                    product=product,
+                    image=image_file,
+                    is_primary=(index == 0)
+                )
+
+            # Handle video uploads (max 2 videos, max 100MB each)
+            videos = request.FILES.getlist('videos')
+            max_videos = 2
+            max_video_size = 100 * 1024 * 1024  # 100MB in bytes
+
+            if len(videos) > max_videos:
+                messages.warning(request, f'Only up to {max_videos} videos are allowed. Additional videos were ignored.')
+
+            for video_file in videos[:max_videos]:
+                # Validate file size
+                if video_file.size > max_video_size:
+                    messages.error(request, f'Video "{video_file.name}" exceeds the 100MB limit and was not uploaded.')
+                    continue
+
+                # Validate file extension
+                allowed_extensions = ['mp4', 'mov', 'avi', 'webm']
+                file_extension = video_file.name.split('.')[-1].lower() if '.' in video_file.name else ''
+                if file_extension not in allowed_extensions:
+                    messages.error(request, f'Video "{video_file.name}" has an unsupported format. Allowed: {", ".join(allowed_extensions)}.')
+                    continue
+
+                try:
+                    # Validate using the model's validator
+                    validate_video_file_size(video_file)
+                    ProductVideo.objects.create(
+                        product=product,
+                        video=video_file,
+                        file_size=video_file.size
+                    )
+                except ValidationError as e:
+                    messages.error(request, str(e))
+
+            # Handle category selection
+            selected_categories = request.POST.getlist('categories')
+            if selected_categories:
+                for category_id in selected_categories:
+                    try:
+                        category = Category.objects.get(id=category_id, is_active=True)
+                        ProductCategory.objects.get_or_create(
+                            product=product,
+                            category=category
+                        )
+                    except Category.DoesNotExist:
+                        pass
+
+            messages.success(request, 'Product submitted for review. It will appear once approved by admin.')
+            return redirect('profile')
+
+        for error in errors:
+            messages.error(request, error)
+
+    context = {
+        'breeds': breeds,
+        'categories': categories,
+        'fur_types': fur_types,
+        'gender_choices': gender_choices,
+        'form_data': form_data,
+    }
+    return render(request, 'auth/add_product.html', context)
+
+
+@seller_required
+@has_shop_required
+def my_products_view(request):
+    """Show all products for the seller's shop"""
+    from shop.models import Product
+    from django.db.models import Avg, Count
+
+    shop = request.user.seller_shop
+    
+    # Get all products for this shop (both approved and pending)
+    products = (
+        Product.objects.filter(shop=shop)
+        .select_related('breed', 'shop')
+        .prefetch_related('images', 'videos')
+        .annotate(
+            avg_rating=Avg('product_reviews__rating'),
+            review_count=Count('product_reviews')
+        )
+        .order_by('-created_at')
+    )
+
+    # Count products by status
+    total_products = products.count()
+    approved_products = products.filter(is_approved=True).count()
+    pending_products = products.filter(is_approved=False, rejected_at__isnull=True).count()
+    rejected_products = products.filter(rejected_at__isnull=False).count()
+
+    context = {
+        'products': products,
+        'shop': shop,
+        'total_products': total_products,
+        'approved_products': approved_products,
+        'pending_products': pending_products,
+        'rejected_products': rejected_products,
+    }
+    
+    return render(request, 'auth/my_products.html', context)
 
 
 def logout_view(request):
@@ -218,17 +443,19 @@ def logout_view(request):
 @login_required
 def profile_view(request):
     """User profile page"""
-    context = {}
-    
-    # If seller, get shop information
+    from shop.models import SellerShop
+
+    shop = None
     if request.user.role == 'SELLER':
         try:
-            from shop.models import SellerShop
             shop = request.user.seller_shop
-            context['shop'] = shop
-        except:
-            context['shop'] = None
-    
+        except SellerShop.DoesNotExist:
+            shop = None
+
+    context = {
+        'shop': shop,
+    }
+
     return render(request, 'auth/profile.html', context)
 
 

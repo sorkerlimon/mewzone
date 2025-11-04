@@ -1,0 +1,313 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}Add Product - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4 mb-4">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold text-primary mb-3">Add a New Product</h1>
+                <p class="lead text-muted">Share your latest feline with the community. Provide accurate details so buyers can make confident decisions—admin approval keeps our marketplace trusted.</p>
+                <div class="d-flex flex-wrap gap-3 mt-3">
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2"><i class="fas fa-paw me-2"></i>Verified Seller</span>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2"><i class="fas fa-shield-check me-2"></i>Manual Approval</span>
+                    <span class="badge bg-info-subtle text-info rounded-pill px-3 py-2"><i class="fas fa-camera me-2"></i>Up to 3 Images</span>
+                    <span class="badge bg-warning-subtle text-warning rounded-pill px-3 py-2"><i class="fas fa-video me-2"></i>Up to 2 Videos</span>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Tips</h5>
+                        <ul class="list-unstyled mb-0 text-muted">
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-circle text-primary me-2 mt-1" style="font-size:0.5rem"></i><span>Use clear, well-lit photos showing your cat from multiple angles.</span></li>
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-circle text-primary me-2 mt-1" style="font-size:0.5rem"></i><span>Videos can showcase your cat's personality and movement—keep files under 100MB.</span></li>
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-circle text-primary me-2 mt-1" style="font-size:0.5rem"></i><span>Include health and vaccination notes in the additional details area.</span></li>
+                            <li class="d-flex align-items-start"><i class="fas fa-circle text-primary me-2 mt-1" style="font-size:0.5rem"></i><span>Discounts are optional—set 0% if you are not running a special offer.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-lg-5">
+                <form method="post" enctype="multipart/form-data" class="row g-4">
+                    {% csrf_token %}
+
+                    <div class="col-lg-6">
+                        <label class="form-label fw-semibold" for="name">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ form_data.name }}" required>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <label class="form-label fw-semibold" for="breed">Breed</label>
+                        <select class="form-select" id="breed" name="breed" required>
+                            <option value="" disabled {% if not form_data.breed %}selected{% endif %}>Select breed</option>
+                            {% for breed in breeds %}
+                                <option value="{{ breed.id }}" {% if form_data.breed == breed.id|stringformat:'s' %}selected{% endif %}>{{ breed.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Product Categories</label>
+                        <div class="border rounded-3 p-3 bg-light">
+                            <small class="text-muted d-block mb-3">Select one or more categories for this product (optional)</small>
+                            <div class="row g-2">
+                                {% for category in categories %}
+                                <div class="col-md-4 col-sm-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categories" value="{{ category.id }}" id="category_{{ category.id }}">
+                                        <label class="form-check-label" for="category_{{ category.id }}">
+                                            {{ category.name }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="col-12">
+                                    <p class="text-muted small mb-0">No categories available. Please contact admin to add categories.</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="gender">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            {% for value,label in gender_choices %}
+                                <option value="{{ value }}" {% if form_data.gender == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="fur_type">Fur Type</label>
+                        <select class="form-select" id="fur_type" name="fur_type" required>
+                            {% for value,label in fur_types %}
+                                <option value="{{ value }}" {% if form_data.fur_type == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="date_of_birth">Date of Birth</label>
+                        <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ form_data.date_of_birth }}" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="color">Color</label>
+                        <input type="text" class="form-control" id="color" name="color" value="{{ form_data.color }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="eye_color">Eye Color</label>
+                        <input type="text" class="form-control" id="eye_color" name="eye_color" value="{{ form_data.eye_color }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="location">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" value="{{ form_data.location }}" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="price">Price (USD)</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="price" name="price" value="{{ form_data.price }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold" for="discount_percentage">Discount (%)</label>
+                        <input type="number" min="0" max="100" class="form-control" id="discount_percentage" name="discount_percentage" value="{{ form_data.discount_percentage }}">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Product Images</label>
+                        <div class="border rounded-3 p-3 bg-light">
+                            <div class="row g-3" id="imagePreviewContainer">
+                                <div class="col-12 text-center">
+                                    <p class="text-muted mb-2">No images selected. Click below to add images.</p>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <input type="file" class="form-control d-none" id="imageInput" accept="image/*" multiple>
+                                <button type="button" class="btn btn-outline-primary w-100" id="addImageBtn">
+                                    <i class="fas fa-plus-circle me-2"></i>Add Images
+                                </button>
+                                <small class="text-muted d-block mt-2">Upload up to 3 images (JPG, PNG). Click to add more.</small>
+                            </div>
+                        </div>
+                        <input type="file" name="images" id="images" accept="image/*" multiple style="display: none;">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" for="videos">Product Videos</label>
+                        <input type="file" class="form-control" id="videos" name="videos" accept="video/*" multiple>
+                        <small class="text-muted">Upload up to 2 videos (MP4, MOV, AVI, WEBM). Max 100MB each.</small>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold" for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4" required>{{ form_data.description }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold" for="additional_notes">Additional Notes</label>
+                        <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3" placeholder="Health records, vaccinations, personality...">{{ form_data.additional_notes }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-semibold" for="other_services">Other Services</label>
+                        <textarea class="form-control" id="other_services" name="other_services" rows="2" placeholder="Grooming, delivery, starter kits, etc.">{{ form_data.other_services }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="ready_to_go" name="ready_to_go" {% if form_data.ready_to_go %}checked{% endif %}>
+                            <label class="form-check-label" for="ready_to_go">Ready to go home immediately</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="available_for_pickup" name="available_for_pickup" {% if form_data.available_for_pickup %}checked{% endif %}>
+                            <label class="form-check-label" for="available_for_pickup">Available for pickup</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="available_for_delivery" name="available_for_delivery" {% if form_data.available_for_delivery %}checked{% endif %}>
+                            <label class="form-check-label" for="available_for_delivery">Offer delivery service</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert alert-info rounded-3 mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Products remain hidden until reviewed and approved by the MewZone admin team.
+                        </div>
+                    </div>
+
+                    <div class="col-12 d-flex flex-wrap gap-3 justify-content-between align-items-center">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Profile</a>
+                        <button type="submit" class="btn btn-primary px-4"><i class="fas fa-paper-plane me-2"></i>Submit Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'shop/partials/footer.html' %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('imageInput');
+    const addImageBtn = document.getElementById('addImageBtn');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const hiddenImageInput = document.getElementById('images');
+    const maxImages = 3;
+    let selectedImages = [];
+
+    // Trigger file input when button is clicked
+    addImageBtn.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    // Handle file selection
+    imageInput.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        
+        // Filter to only images and check if we can add more
+        const imageFiles = files.filter(file => file.type.startsWith('image/'));
+        const remainingSlots = maxImages - selectedImages.length;
+        
+        if (imageFiles.length > remainingSlots) {
+            alert(`You can only add ${remainingSlots} more image(s). Maximum ${maxImages} images allowed.`);
+            imageFiles.splice(remainingSlots);
+        }
+
+        // Add new images to the array
+        imageFiles.forEach(file => {
+            if (selectedImages.length < maxImages) {
+                selectedImages.push(file);
+            }
+        });
+
+        // Update the hidden input with all selected files
+        updateHiddenInput();
+        
+        // Refresh preview
+        renderImagePreviews();
+        
+        // Reset the visible input
+        imageInput.value = '';
+    });
+
+    function renderImagePreviews() {
+        imagePreviewContainer.innerHTML = '';
+        
+        if (selectedImages.length === 0) {
+            imagePreviewContainer.innerHTML = '<div class="col-12 text-center"><p class="text-muted mb-2">No images selected. Click below to add images.</p></div>';
+            return;
+        }
+
+        selectedImages.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-4';
+                col.innerHTML = `
+                    <div class="position-relative border rounded-3 p-2 bg-white">
+                        <img src="${e.target.result}" alt="Preview ${index + 1}" class="img-fluid rounded" style="max-height: 200px; width: 100%; object-fit: cover;">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="removeImage(${index})" title="Remove image">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="mt-2 text-center">
+                            <small class="text-muted d-block">${file.name}</small>
+                            <small class="text-muted">${(file.size / 1024 / 1024).toFixed(2)} MB</small>
+                        </div>
+                    </div>
+                `;
+                imagePreviewContainer.appendChild(col);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Update button state
+        if (selectedImages.length >= maxImages) {
+            addImageBtn.disabled = true;
+            addImageBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Maximum images reached (' + maxImages + ')';
+            addImageBtn.classList.remove('btn-outline-primary');
+            addImageBtn.classList.add('btn-outline-secondary');
+        } else {
+            addImageBtn.disabled = false;
+            addImageBtn.innerHTML = '<i class="fas fa-plus-circle me-2"></i>Add Images (' + selectedImages.length + '/' + maxImages + ')';
+            addImageBtn.classList.remove('btn-outline-secondary');
+            addImageBtn.classList.add('btn-outline-primary');
+        }
+    }
+
+    function updateHiddenInput() {
+        // Create a new DataTransfer object to hold the files
+        const dataTransfer = new DataTransfer();
+        selectedImages.forEach(file => {
+            dataTransfer.items.add(file);
+        });
+        hiddenImageInput.files = dataTransfer.files;
+    }
+
+    // Make removeImage function global so it can be called from inline onclick
+    window.removeImage = function(index) {
+        selectedImages.splice(index, 1);
+        updateHiddenInput();
+        renderImagePreviews();
+    };
+});
+</script>
+
+{% endblock %}
+

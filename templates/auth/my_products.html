@@ -1,0 +1,157 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}My Products - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4 mb-4">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold text-primary mb-2">My Products</h1>
+                <p class="lead text-muted">Manage all your shop products and track their approval status.</p>
+                <div class="d-flex flex-wrap gap-3 mt-3">
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2"><i class="fas fa-store me-2"></i>{{ shop.shop_name }}</span>
+                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2"><i class="fas fa-box me-2"></i>{{ total_products }} Total</span>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-chart-bar text-primary me-2"></i>Product Status</h5>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-success-subtle rounded">
+                                    <p class="text-muted text-uppercase small mb-1">Approved</p>
+                                    <h3 class="mb-0 fw-bold text-success">{{ approved_products }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-warning-subtle rounded">
+                                    <p class="text-muted text-uppercase small mb-1">Pending</p>
+                                    <h3 class="mb-0 fw-bold text-warning">{{ pending_products }}</h3>
+                                </div>
+                            </div>
+                            {% if rejected_products > 0 %}
+                            <div class="col-12">
+                                <div class="text-center p-2 bg-danger-subtle rounded">
+                                    <p class="text-muted text-uppercase small mb-1">Rejected</p>
+                                    <h3 class="mb-0 fw-bold text-danger">{{ rejected_products }}</h3>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-semibold mb-0"><i class="fas fa-list me-2"></i>All Products ({{ total_products }})</h5>
+            <a href="{% url 'add_product' %}" class="btn btn-success"><i class="fas fa-plus-circle me-2"></i>Add New Product</a>
+        </div>
+
+        {% if products %}
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="position-relative">
+                        {% with image=product.images.all|first %}
+                            {% if image %}
+                                <img src="{{ image.image.url }}" alt="{{ product.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=200&fit=crop" alt="{{ product.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                        {% endwith %}
+                        {% if product.discount_percentage > 0 %}
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">{{ product.discount_percentage }}% OFF</span>
+                        {% endif %}
+                        <span class="badge position-absolute top-0 end-0 m-2 
+                            {% if product.is_approved %}bg-success{% elif product.rejected_at %}bg-danger{% else %}bg-warning text-dark{% endif %}">
+                            {% if product.is_approved %}
+                                <i class="fas fa-check-circle me-1"></i>Approved
+                            {% elif product.rejected_at %}
+                                <i class="fas fa-times-circle me-1"></i>Rejected
+                            {% else %}
+                                <i class="fas fa-clock me-1"></i>Pending
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title mb-2">
+                            <a href="{% url 'product_detail' product.id %}" class="text-decoration-none text-dark">{{ product.name }}</a>
+                        </h6>
+                        <p class="text-muted small mb-2">{{ product.breed.name }} • {{ product.get_gender_display }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-warning">
+                                {% with rating=product.avg_rating|default:0 %}
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= rating %}<i class="fas fa-star"></i>{% else %}<i class="far fa-star"></i>{% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted">({{ product.review_count|default:0 }})</small>
+                                {% endwith %}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            {% if product.discount_percentage > 0 %}
+                                <span class="text-decoration-line-through text-muted small">${{ product.price|floatformat:2 }}</span>
+                                <span class="fw-bold text-primary ms-2">${{ product.discounted_price|floatformat:2 }}</span>
+                            {% else %}
+                                <span class="fw-bold text-primary">${{ product.price|floatformat:2 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-primary flex-fill">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                        </div>
+                        {% if product.rejected_at and product.rejection_reason %}
+                        <div class="mt-2">
+                            <small class="text-danger">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Rejection: {{ product.rejection_reason|truncatewords:10 }}
+                            </small>
+                        </div>
+                        {% endif %}
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>Created: {{ product.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body text-center p-5">
+                <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                <h5 class="fw-semibold mb-2">No Products Yet</h5>
+                <p class="text-muted mb-4">Start adding products to your shop to showcase your cats to buyers.</p>
+                <a href="{% url 'add_product' %}" class="btn btn-primary"><i class="fas fa-plus-circle me-2"></i>Add Your First Product</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{% url 'profile' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Profile</a>
+        </div>
+    </div>
+</section>
+
+{% include 'shop/partials/footer.html' %}
+{% endblock %}
+

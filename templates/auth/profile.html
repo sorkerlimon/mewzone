@@ -1,112 +1,165 @@
-{% extends 'base.html' %}
+{% extends 'shop/base_ecommerce.html' %}
 
 {% block title %}Profile - MewZone{% endblock %}
 
 {% block content %}
-<div class="text-center mb-4">
-    <h2 class="fw-bold text-dark">My Profile</h2>
-    <p class="text-muted">Manage your account information</p>
-</div>
+{% include 'shop/partials/header_nav.html' %}
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    {% endfor %}
-{% endif %}
-
-<!-- User Information -->
-<div class="card mb-4 shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title mb-3">
-            <i class="fas fa-user text-primary me-2"></i>Personal Information
-        </h5>
-        <div class="mb-2">
-            <small class="text-muted">Full Name</small>
-            <p class="mb-0 fw-semibold">
-                {{ user.first_name }} {{ user.last_name }}
-            </p>
-        </div>
-        <div class="mb-2">
-            <small class="text-muted">Email</small>
-            <p class="mb-0">{{ user.email }}</p>
-        </div>
-        <div class="mb-2">
-            <small class="text-muted">Phone</small>
-            <p class="mb-0">{{ user.phone|default:"Not provided" }}</p>
-        </div>
-        <div class="mb-0">
-            <small class="text-muted">Role</small>
-            <p class="mb-0">
-                <span class="badge bg-{% if user.role == 'SELLER' %}success{% else %}primary{% endif %}">
-                    {{ user.get_role_display }}
-                </span>
-            </p>
+<section class="profile-hero py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary mb-3">Hello, {{ user.first_name|default:user.email }}</h1>
+                <p class="lead text-muted">Manage your personal details, shop information, and quick actions all in one place.</p>
+                <div class="d-flex flex-wrap gap-3 mt-3">
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2"><i class="fas fa-user-shield me-2"></i>{{ user.get_role_display }}</span>
+                    {% if user.role == 'SELLER' and shop and shop.is_approved %}
+                        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2"><i class="fas fa-check-circle me-2"></i>Shop Approved</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-address-card text-primary me-2"></i>Account Summary</h5>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Full Name</small>
+                                <p class="fw-semibold mb-0">{{ user.get_full_name|default:user.email }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Email</small>
+                                <p class="mb-0">{{ user.email }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Phone</small>
+                                <p class="mb-0">{{ user.phone|default:"Not provided" }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Role</small>
+                                <p class="mb-0"><span class="badge bg-{% if user.role == 'SELLER' %}success{% else %}secondary{% endif %}">{{ user.get_role_display }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- Shop Information (for Sellers) -->
-{% if user.role == 'SELLER' %}
-    {% if shop %}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-store text-success me-2"></i>My Shop
-                    </h5>
-                    <a href="{% url 'update_shop' %}" class="btn btn-sm btn-outline-primary">
-                        <i class="fas fa-edit me-1"></i>Update Shop
-                    </a>
+<section class="py-5">
+    <div class="container">
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-user text-primary me-2"></i>Personal Information</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <small class="text-muted">Full Name</small>
+                                <p class="fw-semibold mb-0">{{ user.get_full_name|default:user.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Email</small>
+                                <p class="mb-0">{{ user.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Phone</small>
+                                <p class="mb-0">{{ user.phone|default:"Not provided" }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted">Joined</small>
+                                <p class="mb-0">{{ user.date_joined|date:"F j, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-2">
-                    <small class="text-muted">Shop Name</small>
-                    <p class="mb-0 fw-semibold">{{ shop.shop_name }}</p>
+
+                {% if user.role == 'SELLER' %}
+                    {% if shop %}
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+                            <div class="card-body p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-semibold mb-0"><i class="fas fa-store text-success me-2"></i>My Shop</h5>
+                                    <a href="{% url 'update_shop' %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit me-1"></i>Update Shop</a>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Shop Name</small>
+                                        <p class="fw-semibold mb-0">{{ shop.shop_name }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Status</small>
+                                        <p class="mb-0">
+                                            {% if shop.is_approved %}
+                                                <span class="badge bg-success">Approved</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">Pending Approval</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Location</small>
+                                        <p class="mb-0">{{ shop.city }}, {{ shop.country }}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">Created</small>
+                                        <p class="mb-0">{{ shop.created_at|date:"F j, Y" }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="card border-0 shadow-sm rounded-4 mb-4">
+                            <div class="card-body text-center p-5">
+                                <i class="fas fa-store fa-3x text-warning mb-3"></i>
+                                <h5 class="fw-semibold">No Shop Created</h5>
+                                <p class="text-muted mb-4">Create your shop to start selling cats and access seller tools.</p>
+                                <a href="{% url 'create_shop' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Create Shop</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h5>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'browse_cats' %}" class="btn btn-outline-primary"><i class="fas fa-paw me-2"></i>Browse Cats</a>
+                            {% if user.role == 'SELLER' and shop %}
+                                <a href="{% url 'my_products' %}" class="btn btn-outline-info"><i class="fas fa-box me-2"></i>My Products</a>
+                                <a href="{% url 'add_product' %}" class="btn btn-outline-success"><i class="fas fa-plus-circle me-2"></i>Add Product</a>
+                                <a href="{% url 'update_shop' %}" class="btn btn-primary"><i class="fas fa-store me-2"></i>Manage Shop</a>
+                            {% endif %}
+                            <a href="{% url 'logout' %}" class="btn btn-outline-danger"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-2">
-                    <small class="text-muted">Status</small>
-                    <p class="mb-0">
-                        {% if shop.is_approved %}
-                            <span class="badge bg-success">Approved</span>
-                        {% else %}
-                            <span class="badge bg-warning">Pending Approval</span>
-                        {% endif %}
-                    </p>
-                </div>
-                <div class="mb-0">
-                    <small class="text-muted">Location</small>
-                    <p class="mb-0">{{ shop.city }}, {{ shop.country }}</p>
+
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-headset text-primary me-2"></i>Need Help?</h5>
+                        <p class="text-muted mb-3">Our support team is ready to help via chat or email for any account or shop questions.</p>
+                        <a href="{% url 'contact' %}" class="btn btn-outline-secondary w-100"><i class="fas fa-envelope-open-text me-2"></i>Contact Support</a>
+                    </div>
                 </div>
             </div>
         </div>
-    {% else %}
-        <div class="card mb-4 shadow-sm border-warning">
-            <div class="card-body text-center">
-                <i class="fas fa-store fa-3x text-warning mb-3"></i>
-                <h5 class="card-title">No Shop Created</h5>
-                <p class="text-muted mb-3">Create your shop to start selling cats!</p>
-                <a href="{% url 'create_shop' %}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Create Shop
-                </a>
-            </div>
-        </div>
-    {% endif %}
-{% endif %}
+    </div>
+</section>
 
-<!-- Quick Actions -->
-<div class="d-grid gap-2">
-    <a href="{% url 'browse_cats' %}" class="btn btn-outline-primary">
-        <i class="fas fa-paw me-2"></i>Browse Cats
-    </a>
-    {% if user.role == 'SELLER' and shop %}
-        <a href="{% url 'update_shop' %}" class="btn btn-primary">
-            <i class="fas fa-store me-2"></i>Manage Shop
-        </a>
-    {% endif %}
-    <a href="{% url 'logout' %}" class="btn btn-outline-danger">
-        <i class="fas fa-sign-out-alt me-2"></i>Logout
-    </a>
-</div>
+{% include 'shop/partials/footer.html' %}
 {% endblock %}

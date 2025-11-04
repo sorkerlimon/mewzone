@@ -1,126 +1,170 @@
-{% extends 'base.html' %}
+{% extends 'shop/base_ecommerce.html' %}
 
 {% block title %}Update Shop - MewZone{% endblock %}
 
 {% block content %}
-<div class="text-center mb-4">
-    <h2 class="fw-bold text-dark">Update Shop Details</h2>
-    <p class="text-muted">Complete your shop information</p>
-</div>
+{% include 'shop/partials/header_nav.html' %}
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4 mb-4">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary mb-2">Update Shop Details</h1>
+                <p class="lead text-muted">Keep your shop information fresh so customers can discover you easily.</p>
+                <div class="d-flex flex-wrap gap-3 mt-3">
+                    <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2"><i class="fas fa-store me-2"></i>{{ shop.shop_name }}</span>
+                    {% if shop.is_approved %}
+                        <span class="badge bg-success text-white rounded-pill px-3 py-2"><i class="fas fa-check me-2"></i>Approved</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2"><i class="fas fa-hourglass-half me-2"></i>Pending Review</span>
+                    {% endif %}
+                </div>
             </div>
-        {% endfor %}
-    {% endif %}
-
-    <div class="mb-3">
-        <label for="shop_name" class="form-label">Shop Name</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-store"></i></span>
-            <input type="text" class="form-control" id="shop_name" name="shop_name" value="{{ shop.shop_name }}" required>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-info-circle text-primary me-2"></i>Shop Snapshot</h5>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Location</small>
+                                <p class="mb-0 fw-semibold">{{ shop.city }}, {{ shop.country }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Last Updated</small>
+                                <p class="mb-0">{{ shop.updated_at|date:"F j, Y" }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Approved Products</small>
+                                <p class="mb-0 fw-semibold">{{ approved_product_count }}</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <small class="text-muted text-uppercase">Created</small>
+                                <p class="mb-0">{{ shop.created_at|date:"F j, Y" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label for="description" class="form-label">Shop Description</label>
-        <textarea class="form-control" id="description" name="description" rows="3" required>{{ shop.description }}</textarea>
-    </div>
-
-    <div class="mb-3">
-        <label for="profile_picture" class="form-label">Shop Profile Picture</label>
-        {% if shop.profile_picture %}
-            <div class="mb-2">
-                <img src="{{ shop.profile_picture.url }}" alt="Current profile picture" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
-                <p class="text-muted small">Current profile picture</p>
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
             </div>
         {% endif %}
-        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
-    </div>
 
-    <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-            <input type="text" class="form-control" id="location" name="location" value="{{ shop.location }}" required>
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-4 p-lg-5">
+                <form method="post" enctype="multipart/form-data" class="row g-4">
+                    {% csrf_token %}
+
+                    <div class="col-12">
+                        <label for="shop_name" class="form-label fw-semibold">Shop Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-store"></i></span>
+                            <input type="text" class="form-control" id="shop_name" name="shop_name" value="{{ shop.shop_name }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="description" class="form-label fw-semibold">Shop Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required>{{ shop.description }}</textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="profile_picture" class="form-label fw-semibold">Shop Profile Picture</label>
+                        {% if shop.profile_picture %}
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <img src="{{ shop.profile_picture.url }}" alt="Current profile picture" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div>
+                                    <p class="text-muted small mb-1">Current profile picture</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="location" class="form-label fw-semibold">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" class="form-control" id="location" name="location" value="{{ shop.location }}" required>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="address" class="form-label fw-semibold">Full Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="2" required>{{ shop.address }}</textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="city" class="form-label fw-semibold">City</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="state" class="form-label fw-semibold">State</label>
+                        <input type="text" class="form-control" id="state" name="state" value="{{ shop.state }}" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="country" class="form-label fw-semibold">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" value="{{ shop.country }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="postal_code" class="form-label fw-semibold">Postal Code</label>
+                        <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ shop.postal_code }}" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="facebook_page" class="form-label fw-semibold">Facebook Page URL</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fab fa-facebook"></i></span>
+                            <input type="url" class="form-control" id="facebook_page" name="facebook_page" value="{{ shop.facebook_page }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="instagram_handle" class="form-label fw-semibold">Instagram Handle</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fab fa-instagram"></i></span>
+                            <input type="text" class="form-control" id="instagram_handle" name="instagram_handle" value="{{ shop.instagram_handle }}" placeholder="@yourhandle">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="twitter_handle" class="form-label fw-semibold">Twitter Handle</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fab fa-twitter"></i></span>
+                            <input type="text" class="form-control" id="twitter_handle" name="twitter_handle" value="{{ shop.twitter_handle }}" placeholder="@yourhandle">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="alert {% if shop.is_approved %}alert-success{% else %}alert-warning{% endif %} rounded-3 mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <strong>Approval Status:</strong>
+                            {% if shop.is_approved %}
+                                <span>Your shop is approved and visible to buyers.</span>
+                            {% else %}
+                                <span>Your shop is pending admin approval. We will notify you once it is live.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mt-3">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to Profile</a>
+                            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Update Shop</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+</section>
 
-    <div class="mb-3">
-        <label for="address" class="form-label">Full Address</label>
-        <textarea class="form-control" id="address" name="address" rows="2" required>{{ shop.address }}</textarea>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="city" class="form-label">City</label>
-            <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}" required>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label for="state" class="form-label">State</label>
-            <input type="text" class="form-control" id="state" name="state" value="{{ shop.state }}" required>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="country" class="form-label">Country</label>
-            <input type="text" class="form-control" id="country" name="country" value="{{ shop.country }}" required>
-        </div>
-        <div class="col-md-6 mb-3">
-            <label for="postal_code" class="form-label">Postal Code</label>
-            <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ shop.postal_code }}" required>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="facebook_page" class="form-label">Facebook Page URL</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fab fa-facebook"></i></span>
-            <input type="url" class="form-control" id="facebook_page" name="facebook_page" value="{{ shop.facebook_page }}">
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="instagram_handle" class="form-label">Instagram Handle</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fab fa-instagram"></i></span>
-            <input type="text" class="form-control" id="instagram_handle" name="instagram_handle" value="{{ shop.instagram_handle }}" placeholder="@yourhandle">
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label for="twitter_handle" class="form-label">Twitter Handle</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fab fa-twitter"></i></span>
-            <input type="text" class="form-control" id="twitter_handle" name="twitter_handle" value="{{ shop.twitter_handle }}" placeholder="@yourhandle">
-        </div>
-    </div>
-
-    <div class="alert alert-warning">
-        <i class="fas fa-exclamation-triangle me-2"></i>
-        <strong>Status:</strong> 
-        {% if shop.is_approved %}
-            <span class="text-success">Your shop is approved and live!</span>
-        {% else %}
-            <span class="text-warning">Your shop is pending admin approval.</span>
-        {% endif %}
-    </div>
-
-    <button type="submit" class="btn btn-cat w-100 py-2 mb-3">
-        <i class="fas fa-save me-2"></i>Update Shop
-    </button>
-
-    <div class="text-center">
-        <p class="text-muted">
-            <a href="{% url 'login' %}" class="text-decoration-none">Back to Login</a>
-        </p>
-    </div>
-</form>
+{% include 'shop/partials/footer.html' %}
 {% endblock %}
