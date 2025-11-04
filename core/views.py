@@ -398,15 +398,11 @@ def product_detail_view(request, product_id):
     images = product.images.all()
     videos = product.videos.all()
     reviews = product.product_reviews.filter(is_approved=True)
-    categories = Category.objects.filter(is_active=True).prefetch_related('breeds')
-    breeds = Breed.objects.filter(is_active=True)
     return render(request, 'shop/product_detail.html', {
         'product': product,
         'images': images,
         'videos': videos,
         'reviews': reviews,
-        'categories': categories,
-        'breeds': breeds,
     })
 
 
@@ -462,13 +458,8 @@ def mate_list_view(request):
         .order_by('-created_at')
     )
     
-    categories = Category.objects.filter(is_active=True).prefetch_related('breeds')
-    breeds = Breed.objects.filter(is_active=True)
-    
     context = {
         'mates': mates,
-        'categories': categories,
-        'breeds': breeds,
     }
     
     return render(request, 'shop/mate_list.html', context)
@@ -493,16 +484,112 @@ def mate_detail_view(request, mate_id):
     images = mate.images.all()
     videos = mate.videos.all()
     reviews = mate.mate_reviews.filter(is_approved=True)
-    categories = Category.objects.filter(is_active=True).prefetch_related('breeds')
-    breeds = Breed.objects.filter(is_active=True)
     
     context = {
         'mate': mate,
         'images': images,
         'videos': videos,
         'reviews': reviews,
-        'categories': categories,
-        'breeds': breeds,
     }
     
     return render(request, 'shop/mate_detail.html', context)
+
+
+def about_view(request):
+    """About Us page highlighting trust and approval process"""
+    from shop.models import SellerShop, Product, Mate
+
+    context = {
+        'stats': {
+            'approved_shops': SellerShop.objects.filter(is_approved=True).count(),
+            'approved_products': Product.objects.filter(is_approved=True).count(),
+            'approved_mates': Mate.objects.filter(is_approved=True).count(),
+        }
+    }
+    return render(request, 'shop/about.html', context)
+
+
+def contact_view(request):
+    """Contact Us page with simple acknowledgement form"""
+    default_form = {
+        'name': '',
+        'email': '',
+        'phone': '',
+        'subject': '',
+        'message': '',
+    }
+
+    form_data = default_form.copy()
+
+    if request.method == 'POST':
+        form_data = {
+            'name': request.POST.get('name', '').strip(),
+            'email': request.POST.get('email', '').strip(),
+            'phone': request.POST.get('phone', '').strip(),
+            'subject': request.POST.get('subject', '').strip(),
+            'message': request.POST.get('message', '').strip(),
+        }
+
+        missing_fields = [field for field in ['name', 'email', 'message'] if not form_data[field]]
+        if missing_fields:
+            messages.error(request, 'Please fill in your name, email, and message so we can get back to you.')
+        else:
+            messages.success(request, 'Thank you for reaching out! Our support team will contact you shortly.')
+            form_data = default_form.copy()
+
+    context = {
+        'form_data': form_data,
+        'support_channels': {
+            'phone': '+880 1819-777288',
+            'email': 'support@mewzone.com',
+            'hours': 'Monday - Friday, 9:00 AM to 6:00 PM (GMT+6)',
+            'address': '123 Cat Street, Meow City, MC 12345',
+        }
+    }
+    return render(request, 'shop/contact.html', context)
+
+
+def terms_view(request):
+    """Terms & Policies page covering platform rules"""
+    policy_sections = [
+        {
+            'title': 'Marketplace Integrity',
+            'icon': 'fas fa-balance-scale',
+            'points': [
+                'MewZone acts as a trusted marketplace connecting verified sellers with cat lovers.',
+                'All pricing, descriptions, and media must accurately represent the cat or service offered.',
+                'We reserve the right to remove listings that violate community standards or legal requirements.'
+            ]
+        },
+        {
+            'title': 'Privacy & Data Protection',
+            'icon': 'fas fa-user-shield',
+            'points': [
+                'Personal data is collected strictly for account management, order processing, and support.',
+                'We never sell personal information. Third parties only receive data essential to your transaction.',
+                'Users may request data export or deletion by contacting support@mewzone.com.'
+            ]
+        }
+    ]
+
+    sell_policy = [
+        'Only verified seller accounts may list cats, products, or mate services.',
+        'Each listing requires up-to-date health records and proof of ownership for admin approval.',
+        'Refund and replacement terms must be clearly stated; disputes will be mediated by MewZone admins.',
+        'Sellers must respond to buyer inquiries within 24 hours on business days.'
+    ]
+
+    mate_policy = [
+        'Mate listings are limited to healthy, vet-cleared cats aged 18 months or older.',
+        'A maximum of five images and one video per mate profile to ensure clarity and review efficiency.',
+        'All meetings for mate services should occur in safe, mutually agreed locations with proper supervision.',
+        'Post-mating veterinary checkups are strongly encouraged and may be requested by MewZone for compliance.'
+    ]
+
+    context = {
+        'policy_sections': policy_sections,
+        'sell_policy': sell_policy,
+        'mate_policy': mate_policy,
+        'last_updated': timezone.now().strftime('%B %d, %Y')
+    }
+    return render(request, 'shop/terms.html', context)

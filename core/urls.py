@@ -13,6 +13,9 @@ urlpatterns = [
     
     # Home page
     path('', views.home_view, name='home'),
+    path('about/', views.about_view, name='about'),
+    path('contact/', views.contact_view, name='contact'),
+    path('terms/', views.terms_view, name='terms'),
     
     # E-commerce pages
     path('browse/', views.browse_cats_view, name='browse_cats'),

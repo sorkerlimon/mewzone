@@ -5,38 +5,6 @@
 {% block content %}
 {% include 'shop/partials/header_nav.html' %}
 
-<!-- Categories Modal -->
-<div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title" id="categoriesModalLabel"><i class="fas fa-th-large me-2"></i>Browse Categories</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <div class="category-grid">
-                    {% for category in categories %}
-                    <a href="#" class="category-item"><i class="fas fa-th-large me-2"></i><span>{{ category.name }}</span><small class="text-muted">({{ category.breeds.count }} breeds)</small></a>
-                    {% empty %}<p class="text-muted">No categories available</p>{% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Breeds Modal -->
-<div class="modal fade" id="breedsModal" tabindex="-1" aria-labelledby="breedsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title" id="breedsModalLabel"><i class="fas fa-paw me-2"></i>Browse Breeds</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <div class="breed-grid">
-                    {% for breed in breeds %}
-                    <a href="#" class="breed-item"><i class="fas fa-paw me-2"></i><span>{{ breed.name }}</span><small class="text-muted">({{ breed.products.count }} cats)</small></a>
-                    {% empty %}<p class="text-muted">No breeds available</p>{% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Product Content -->
 <div class="container-fluid mt-4">
   <div class="row">
@@ -152,22 +120,12 @@ document.addEventListener('DOMContentLoaded', function(){
       else { showImage(src); }
     });
   });
-  // mobile nav + modals
+  // mobile nav
   const mobileMenuToggle = document.getElementById('mobileMenuToggle');
   const mobileNavMenu = document.getElementById('mobileNavMenu');
   const closeMobileMenu = document.getElementById('closeMobileMenu');
   if (mobileMenuToggle && mobileNavMenu) mobileMenuToggle.addEventListener('click', ()=>{ mobileNavMenu.classList.add('show'); document.body.style.overflow='hidden'; });
   if (closeMobileMenu && mobileNavMenu) closeMobileMenu.addEventListener('click', ()=>{ mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; });
-  const categoriesBtn = document.getElementById('categoriesBtn');
-  const breedsBtn = document.getElementById('breedsBtn');
-  const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
-  const mobileBreedsBtn = document.getElementById('mobileBreedsBtn');
-  const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
-  const breedsModal = new bootstrap.Modal(document.getElementById('breedsModal'));
-  if (categoriesBtn) categoriesBtn.addEventListener('click', (e)=>{ e.preventDefault(); categoriesModal.show(); });
-  if (breedsBtn) breedsBtn.addEventListener('click', (e)=>{ e.preventDefault(); breedsModal.show(); });
-  if (mobileCategoriesBtn) mobileCategoriesBtn.addEventListener('click', (e)=>{ e.preventDefault(); mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; categoriesModal.show(); });
-  if (mobileBreedsBtn) mobileBreedsBtn.addEventListener('click', (e)=>{ e.preventDefault(); mobileNavMenu.classList.remove('show'); document.body.style.overflow='auto'; breedsModal.show(); });
 
   // cart actions
   const qtyEl = document.getElementById('qty');

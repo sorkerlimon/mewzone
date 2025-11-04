@@ -38,6 +38,8 @@
                                 {% endif %}
                             </h6></li>
                             <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-badge me-2"></i>Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
                     </div>
@@ -65,22 +67,16 @@
             <a class="nav-link" href="{% url 'browse_cats' %}">
                 <i class="fas fa-home me-2"></i> Home
             </a>
-            <a class="nav-link" href="#" id="categoriesBtn">
-                <i class="fas fa-th-large me-2"></i> Categories
-            </a>
-            <a class="nav-link" href="#" id="breedsBtn">
-                <i class="fas fa-paw me-2"></i> Breeds
-            </a>
             <a class="nav-link" href="{% url 'shop_list' %}">
                 <i class="fas fa-store me-2"></i> Shop
             </a>
             <a class="nav-link" href="{% url 'mate_list' %}">
                 <i class="fas fa-heart me-2"></i> Find a Mate
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'about' %}">
                 <i class="fas fa-info-circle me-2"></i> About Us
             </a>
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'contact' %}">
                 <i class="fas fa-envelope me-2"></i> Contact Us
             </a>
         </div>
@@ -113,6 +109,8 @@
                         {% endif %}
                     </h6></li>
                     <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-badge me-2"></i>Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                 </ul>
             </div>
@@ -137,17 +135,17 @@
                 <a class="mobile-nav-link" href="{% url 'browse_cats' %}">
                     <i class="fas fa-home me-2"></i> Home
                 </a>
-                <a class="mobile-nav-link" href="#" id="mobileCategoriesBtn">
-                    <i class="fas fa-th-large me-2"></i> Categories
-                </a>
-                <a class="mobile-nav-link" href="#" id="mobileBreedsBtn">
-                    <i class="fas fa-paw me-2"></i> Breeds
-                </a>
                 <a class="mobile-nav-link" href="{% url 'shop_list' %}">
                     <i class="fas fa-store me-2"></i> Shop
                 </a>
                 <a class="mobile-nav-link" href="{% url 'mate_list' %}">
                     <i class="fas fa-heart me-2"></i> Find a Mate
+                </a>
+                <a class="mobile-nav-link" href="{% url 'about' %}">
+                    <i class="fas fa-info-circle me-2"></i> About Us
+                </a>
+                <a class="mobile-nav-link" href="{% url 'contact' %}">
+                    <i class="fas fa-envelope me-2"></i> Contact Us
                 </a>
                 <div class="mobile-nav-divider"></div>
                 {% if user.is_authenticated %}

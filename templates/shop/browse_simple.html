@@ -5,106 +5,6 @@
 {% block content %}
 {% include 'shop/partials/header_nav.html' %}
 
-    <!-- Categories Modal -->
-    <div class="modal fade" id="categoriesModal" tabindex="-1" aria-labelledby="categoriesModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="categoriesModalLabel">
-                        <i class="fas fa-th-large me-2"></i>Browse Categories
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-primary mb-3">Popular Categories</h6>
-                            <div class="category-grid">
-                                {% for category in categories %}
-                                <a href="#" class="category-item">
-                                    <i class="fas fa-th-large me-2"></i>
-                                    <span>{{ category.name }}</span>
-                                    <small class="text-muted">({{ category.breeds.count }} breeds)</small>
-                                </a>
-                                {% empty %}
-                                <p class="text-muted">No categories available</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="text-primary mb-3">All Categories</h6>
-                            <div class="category-list">
-                                {% for category in categories %}
-                                <a href="#" class="category-link">
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>{{ category.name }}</span>
-                                    <span class="badge bg-primary rounded-pill">{{ category.breeds.count }}</span>
-                                </a>
-                                {% empty %}
-                                <p class="text-muted">No categories available</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">View All Categories</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Breeds Modal -->
-    <div class="modal fade" id="breedsModal" tabindex="-1" aria-labelledby="breedsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="breedsModalLabel">
-                        <i class="fas fa-paw me-2"></i>Browse Breeds
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-primary mb-3">Popular Breeds</h6>
-                            <div class="breed-grid">
-                                {% for breed in breeds %}
-                                <a href="#" class="breed-item">
-                                    <i class="fas fa-paw me-2"></i>
-                                    <span>{{ breed.name }}</span>
-                                    <small class="text-muted">({{ breed.products.count }} cats)</small>
-                                </a>
-                                {% empty %}
-                                <p class="text-muted">No breeds available</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h6 class="text-primary mb-3">All Breeds</h6>
-                            <div class="breed-list">
-                                {% for breed in breeds %}
-                                <a href="#" class="breed-link">
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>{{ breed.name }}</span>
-                                    <span class="badge bg-primary rounded-pill">{{ breed.products.count }}</span>
-                                </a>
-                                {% empty %}
-                                <p class="text-muted">No breeds available</p>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">View All Breeds</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Mobile Filter Toggle Button -->
     <div class="mobile-filter-toggle d-lg-none">
         <button class="btn btn-primary w-100" id="mobileFilterToggle">
@@ -120,9 +20,14 @@
                 <div class="filter-sidebar bg-white p-4 rounded shadow-sm" id="filterSidebar">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Cats</h5>
-                    <button class="btn btn-sm btn-outline-secondary d-lg-none" id="closeMobileFilter">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-primary" id="clearFilters">
+                            <i class="fas fa-undo me-1"></i> Clear All
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary d-lg-none" id="closeMobileFilter">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Search by Name -->
@@ -212,7 +117,6 @@
                     </div>
                 </div>
 
-                <button class="btn btn-outline-secondary w-100" id="clearFilters">Clear All</button>
             </div>
         </div>
 
@@ -415,46 +319,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         chatBody.appendChild(messageDiv);
         chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-    // Categories and Breeds Modal functionality
-    const categoriesBtn = document.getElementById('categoriesBtn');
-    const breedsBtn = document.getElementById('breedsBtn');
-    const mobileCategoriesBtn = document.getElementById('mobileCategoriesBtn');
-    const mobileBreedsBtn = document.getElementById('mobileBreedsBtn');
-    const categoriesModal = new bootstrap.Modal(document.getElementById('categoriesModal'));
-    const breedsModal = new bootstrap.Modal(document.getElementById('breedsModal'));
-    
-    if (categoriesBtn) {
-        categoriesBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            categoriesModal.show();
-        });
-    }
-    
-    if (breedsBtn) {
-        breedsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            breedsModal.show();
-        });
-    }
-    
-    if (mobileCategoriesBtn) {
-        mobileCategoriesBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            mobileNavMenu.classList.remove('show');
-            document.body.style.overflow = 'auto';
-            categoriesModal.show();
-        });
-    }
-    
-    if (mobileBreedsBtn) {
-        mobileBreedsBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            mobileNavMenu.classList.remove('show');
-            document.body.style.overflow = 'auto';
-            breedsModal.show();
-        });
     }
 
     // Mobile menu toggle functionality

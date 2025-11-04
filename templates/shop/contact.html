@@ -1,0 +1,213 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}Contact Us - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary mb-3">We're here to help every step of the adoption journey.</h1>
+                <p class="lead text-muted">Whether you have questions about a product, need assistance with mate approvals, or just want advice on caring for your new feline friend, the MewZone support team is ready to help.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary rounded-pill px-3 py-2"><i class="fas fa-headset me-2"></i>Dedicated Support</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success rounded-pill px-3 py-2"><i class="fas fa-clock me-2"></i>Fast Response</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-phone text-primary me-2"></i>Talk with us</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-phone-alt text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Phone</div>
+                                    <p class="text-muted mb-0">{{ support_channels.phone }}</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-envelope text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Email</div>
+                                    <p class="text-muted mb-0">{{ support_channels.email }}</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center mb-3">
+                                <i class="fas fa-clock text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Support Hours</div>
+                                    <p class="text-muted mb-0">{{ support_channels.hours }}</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                                <div>
+                                    <div class="fw-semibold">Address</div>
+                                    <p class="text-muted mb-0">{{ support_channels.address }}</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if messages %}
+<div class="container mt-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-3">Send us a message</h3>
+                        <p class="text-muted mb-4">Fill out the form below and we'll respond within 24 business hours. We love hearing from fellow cat enthusiasts!</p>
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Your Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" value="{{ form_data.name }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address *</nlabel>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="{{ form_data.email }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="Optional" value="{{ form_data.phone }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="subject" class="form-label">Subject</label>
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="How can we assist?" value="{{ form_data.subject }}">
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control" id="message" name="message" rows="5" placeholder="Share your question or request" required>{{ form_data.message }}</textarea>
+                                </div>
+                                <div class="col-12 d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">We value your privacy. Your details are safe with us.</small>
+                                    <button type="submit" class="btn btn-primary px-4"><i class="fas fa-paper-plane me-2"></i>Send Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Frequently Asked</h4>
+                        <div class="accordion" id="contactFAQ">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="faqOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        How long does approval take?
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="faqOne" data-bs-parent="#contactFAQ">
+                                    <div class="accordion-body">
+                                        Product and mate listings are reviewed within 24-48 hours. We'll contact you if we need extra information.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="faqTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        Can I visit the seller before adopting?
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faqTwo" data-bs-parent="#contactFAQ">
+                                    <div class="accordion-body">
+                                        Absolutely! We encourage meet-and-greets. Contact us and we'll coordinate directly with the verified seller.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="faqThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        Do you offer post-adoption support?
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faqThree" data-bs-parent="#contactFAQ">
+                                    <div class="accordion-body">
+                                        Yes! Our care specialists can provide nutrition tips, vet resources, and behavior guidance for your new companion.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h6 class="fw-semibold"><i class="fas fa-users text-primary me-2"></i>Need seller assistance?</h6>
+                            <p class="text-muted mb-0">Sellers can reach the account management team directly at <a href="mailto:partners@mewzone.com">partners@mewzone.com</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow-sm">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.90336174057!2d90.39126291543159!3d23.7508852946958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755bf52cf0f0869%3A0x44c6d291b3233cfd!2sDhaka!5e0!3m2!1sen!2sbd!4v1700000000000" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Visit our experience center</h4>
+                        <p class="text-muted">Schedule a visit to meet some of our adorable ambassador cats, try out curated products, and speak with our feline care team.</p>
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-calendar-alt text-primary me-3 mt-1"></i>
+                                <div>
+                                    <div class="fw-semibold">By appointment only</div>
+                                    <p class="text-muted mb-0">Book at least 24 hours in advance so we can prepare a comfortable meet-and-greet space.</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-paw text-primary me-3 mt-1"></i>
+                                <div>
+                                    <div class="fw-semibold">Cat-friendly environment</div>
+                                    <p class="text-muted mb-0">We maintain calming spaces with enrichment toys, climate control, and vet-approved hygiene standards.</p>
+                                </div>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <i class="fas fa-id-card text-primary me-3 mt-1"></i>
+                                <div>
+                                    <div class="fw-semibold">Bring ID</div>
+                                    <p class="text-muted mb-0">For everyone's safety, please bring a government-issued ID for check-in.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'shop/partials/footer.html' %}
+{% endblock %}
+

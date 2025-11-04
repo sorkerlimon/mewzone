@@ -1,0 +1,140 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}Terms & Policies - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<section class="terms-hero py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bold text-primary mb-3">MewZone Terms, Privacy, & Policies</h1>
+                <p class="lead text-muted">We are committed to creating a transparent, ethical marketplace for every cat lover. Review our policies to understand how we protect you, our sellers, and the cats entrusted to our community.</p>
+                <div class="d-inline-flex align-items-center gap-3 mt-3">
+                    <span class="badge bg-primary rounded-pill px-3 py-2"><i class="fas fa-shield-alt me-2"></i>Admin Approved Marketplace</span>
+                    <span class="badge bg-success rounded-pill px-3 py-2"><i class="fas fa-heart me-2"></i>Animal Welfare First</span>
+                </div>
+                <p class="text-muted mt-4 mb-0"><i class="fas fa-calendar-check me-2 text-primary"></i>Last updated {{ last_updated }}</p>
+            </div>
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-file-signature text-primary me-2"></i>Summary</h5>
+                        <ul class="list-unstyled mb-0">
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-2 mt-1"></i>
+                                <span>All listings undergo manual admin review before publication.</span>
+                            </li>
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check text-success me-2 mt-1"></i>
+                                <span>We collect only the data necessary to complete secure transactions.</span>
+                            </li>
+                            <li class="d-flex align-items-start">
+                                <i class="fas fa-check text-success me-2 mt-1"></i>
+                                <span>Special policies protect both buyers and sellers for product and mate services.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for section in policy_sections %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <div class="icon-circle mb-3" style="width:60px;height:60px;border-radius:50%;background:#eef2ff;color:#4c51bf;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
+                            <i class="{{ section.icon }}"></i>
+                        </div>
+                        <h4 class="fw-semibold mb-3">{{ section.title }}</h4>
+                        <ul class="list-unstyled mb-0 text-muted">
+                            {% for point in section.points %}
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-circle text-primary me-2" style="font-size:0.5rem;margin-top:0.5rem;"></i>
+                                <span>{{ point }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3"><i class="fas fa-store me-2"></i>Seller Policy</h2>
+                <p class="text-white-50">These guidelines keep our marketplace balanced and fair for every verified seller.</p>
+                <ul class="list-unstyled">
+                    {% for item in sell_policy %}
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="fas fa-check-circle text-light me-3 mt-1"></i>
+                        <span>{{ item }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 rounded-4 shadow bg-white text-dark h-100">
+                    <div class="card-body p-4">
+                        <h3 class="fw-semibold mb-3"><i class="fas fa-heartbeat text-danger me-2"></i>Mate Service Policy</h3>
+                        <p class="text-muted">We designed the mate policy to prioritize animal wellbeing and responsible breeding practices.</p>
+                        <ul class="list-unstyled mb-0">
+                            {% for item in mate_policy %}
+                            <li class="d-flex align-items-start mb-3">
+                                <i class="fas fa-paw text-primary me-3 mt-1"></i>
+                                <span>{{ item }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">User Responsibilities</h4>
+                        <ul class="list-unstyled text-muted mb-0">
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-dot-circle text-primary me-2 mt-1"></i><span>Maintain accurate profile information and promptly report suspicious activity.</span></li>
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-dot-circle text-primary me-2 mt-1"></i><span>Schedule meetups in safe locations and follow recommended hygiene and health protocols.</span></li>
+                            <li class="d-flex align-items-start mb-3"><i class="fas fa-dot-circle text-primary me-2 mt-1"></i><span>Respect fellow community members and follow moderators’ instructions during disputes.</span></li>
+                            <li class="d-flex align-items-start"><i class="fas fa-dot-circle text-primary me-2 mt-1"></i><span>Share honest reviews; defamatory or misleading comments may be removed.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h4 class="fw-semibold mb-3">Need clarifications?</h4>
+                        <p class="text-muted">Our compliance team is available to walk you through any policy. Reach out anytime.</p>
+                        <a href="{% url 'contact' %}" class="btn btn-primary w-100"><i class="fas fa-envelope-open-text me-2"></i>Contact Support</a>
+                        <hr class="my-4">
+                        <p class="text-muted small mb-0">These policies are subject to change. Significant updates will be communicated to all registered users via email.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'shop/partials/footer.html' %}
+{% endblock %}
+

@@ -1,0 +1,213 @@
+{% extends 'shop/base_ecommerce.html' %}
+
+{% block title %}About Us - MewZone{% endblock %}
+
+{% block content %}
+{% include 'shop/partials/header_nav.html' %}
+
+<section class="about-hero py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h1 class="display-5 fw-bold text-primary mb-3">We connect loving homes with trusted feline companions.</h1>
+                <p class="lead text-muted mb-4">
+                    MewZone is built on transparency, compassion, and quality. Every cat product and mating service you see on our platform has passed our multi-stage admin approval workflow, so you can shop and connect with total confidence.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-success rounded-pill px-3 py-2"><i class="fas fa-check-circle me-2"></i>Verified Sellers</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary rounded-pill px-3 py-2"><i class="fas fa-shield-alt me-2"></i>Admin Approved Listings</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?w=1000&h=600&fit=crop" class="img-fluid rounded-4 shadow" alt="Happy cat and owner">
+                    <div class="card shadow position-absolute top-100 start-50 translate-middle rounded-4 border-0" style="min-width: 280px; margin-top: -70px;">
+                        <div class="card-body p-4">
+                            <h5 class="fw-semibold mb-1"><i class="fas fa-star text-warning me-2"></i>Trusted by Cat Lovers</h5>
+                            <p class="small text-muted mb-0">Thousands of safe, approved matches between families and their new feline friends every year.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-6 mx-auto">
+                <h2 class="fw-bold">Why MewZone is Trusted</h2>
+                <p class="text-muted">From product listings to mate services, we safeguard every step so you can focus on bonding with your perfect cat.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="icon-circle mb-3" style="width:60px;height:60px;background:#e9f4ff;color:#0d6efd;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h5 class="fw-semibold">Multi-layer Verification</h5>
+                        <p class="text-muted mb-0">Sellers submit documentation, health certificates, and background details. Our admin team reviews every submission before it goes live.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="icon-circle mb-3" style="width:60px;height:60px;background:#e8fff3;color:#198754;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h5 class="fw-semibold">Animal-first Approach</h5>
+                        <p class="text-muted mb-0">We partner with vets and experienced breeders to ensure every cat is cared for responsibly and ethically before joining a new family.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0 rounded-4">
+                    <div class="card-body p-4">
+                        <div class="icon-circle mb-3" style="width:60px;height:60px;background:#fff4e6;color:#fd7e14;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h5 class="fw-semibold">Transparent Community Reviews</h5>
+                        <p class="text-muted mb-0">Only verified buyers can leave feedback, and each review is screened by admins to keep our marketplace honest and supportive.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <h2 class="fw-bold mb-3">Every listing passes admin approval before you ever see it.</h2>
+                <p class="mb-4">We evaluate health records, certifications, breeder professionalism, and service readiness to ensure that each product and mate option on MewZone meets our quality standard.</p>
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="border border-light rounded-4 p-3 h-100">
+                            <h4 class="fw-bold mb-1">{{ stats.approved_products }}</h4>
+                            <p class="small text-white-50 mb-0">Admin-approved cat products currently available.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="border border-light rounded-4 p-3 h-100">
+                            <h4 class="fw-bold mb-1">{{ stats.approved_mates }}</h4>
+                            <p class="small text-white-50 mb-0">Verified mate listings ready for safe connections.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="border border-light rounded-4 p-3 h-100">
+                            <h4 class="fw-bold mb-1">{{ stats.approved_shops }}</h4>
+                            <p class="small text-white-50 mb-0">Trusted shops partnered with MewZone worldwide.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="bg-white text-dark rounded-4 shadow p-4">
+                    <h5 class="fw-semibold mb-3"><i class="fas fa-clipboard-check text-primary me-2"></i>Admin Approval Checklist</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="d-flex align-items-start mb-3">
+                            <i class="fas fa-check text-success me-2 mt-1"></i>
+                            <span>Identity and ownership documents verified for every seller.</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <i class="fas fa-check text-success me-2 mt-1"></i>
+                            <span>Health certifications and care history reviewed for each cat or mating partner.</span>
+                        </li>
+                        <li class="d-flex align-items-start mb-3">
+                            <i class="fas fa-check text-success me-2 mt-1"></i>
+                            <span>Content, photos, and videos assessed to keep listings accurate and compassionate.</span>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="fas fa-check text-success me-2 mt-1"></i>
+                            <span>Listing performance continuously monitored with feedback loops to admins.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <h2 class="fw-bold mb-3">How we keep your experience safe and joyful</h2>
+                <p class="text-muted">Our team blends years of feline expertise with modern technology to make matchmaking seamless for both humans and cats. We handle the behind-the-scenes checks so you can focus on the happy moments.</p>
+                <ul class="list-unstyled">
+                    <li class="d-flex align-items-start mb-3">
+                        <span class="badge bg-primary rounded-circle me-3" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;">1</span>
+                        <div>
+                            <h6 class="fw-semibold mb-1">Seller Onboarding</h6>
+                            <p class="text-muted mb-0">Dedicated specialists review each seller’s credentials, housing conditions, and animal welfare standards.</p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <span class="badge bg-primary rounded-circle me-3" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;">2</span>
+                        <div>
+                            <h6 class="fw-semibold mb-1">Listing Verification</h6>
+                            <p class="text-muted mb-0">Every product and mate entry is manually validated, and the admin approval log tracks each decision.</p>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start">
+                        <span class="badge bg-primary rounded-circle me-3" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;">3</span>
+                        <div>
+                            <h6 class="fw-semibold mb-1">Ongoing Monitoring</h6>
+                            <p class="text-muted mb-0">Reviews, ratings, and reports are monitored daily so we can step in quickly whenever support is needed.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <div class="ratio ratio-16x9 rounded-4 overflow-hidden shadow">
+                    <iframe src="https://www.youtube.com/embed/bx-s5GKHt5M" title="MewZone Story" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold">Our Promise to You</h2>
+                <p class="text-muted">Every paw step is guided by our admin team, giving you peace of mind that your new companion or mate partner is exactly who they claim to be.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <blockquote class="blockquote mb-0">
+                            <p class="mb-3">“I loved how smooth and safe the experience felt. My cat, Luna, came healthy and happy, exactly as described. The MewZone admins really cared about every detail.”</p>
+                            <footer class="blockquote-footer">Nadia Rahman, <cite title="Source Title">Verified adopter</cite></footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-semibold mb-3"><i class="fas fa-hands-helping text-primary me-2"></i>Partner with Us</h5>
+                        <p class="text-muted">Are you a passionate, responsible seller or breeder? Join MewZone to reach a community that values trust and uncompromising standards.</p>
+                        <a href="{% url 'register' %}" class="btn btn-primary">Start Selling with MewZone</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% include 'shop/partials/footer.html' %}
+{% endblock %}
+
